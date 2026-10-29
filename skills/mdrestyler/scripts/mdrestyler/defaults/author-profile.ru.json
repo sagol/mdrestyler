@@ -1,0 +1,197 @@
+{
+ "schema": "mdrestyler-author-profile/1",
+ "tool": "hand-set default",
+ "measure_method": 2,
+ "default": true,
+ "language": "ru",
+ "built": "default",
+ "sources": [],
+ "measures": {},
+ "function_words": {},
+ "targets": {
+  "sentence_len_median": {
+   "label": "median sentence length, words",
+   "value": 9,
+   "low": 6,
+   "high": 13,
+   "min_words": 400
+  },
+  "sentence_len_mean": {
+   "label": "mean sentence length, words",
+   "value": 12,
+   "low": 8.5,
+   "high": 16,
+   "min_words": 400
+  },
+  "sentence_len_p90": {
+   "label": "long end of sentence length (90th percentile), words",
+   "value": 25,
+   "low": 16,
+   "high": 33,
+   "min_words": 600
+  },
+  "short_sentence_share": {
+   "label": "share of sentences of 6 words or fewer",
+   "value": 0.33,
+   "low": 0.18,
+   "high": 0.5,
+   "min_words": 600
+  },
+  "long_sentence_share": {
+   "label": "share of sentences of 30 words or more",
+   "value": 0.06,
+   "low": 0.01,
+   "high": 0.12,
+   "min_words": 600
+  },
+  "sentence_len_cv": {
+   "label": "variation of sentence length (sd / mean)",
+   "value": 0.85,
+   "low": 0.65,
+   "high": 1.05,
+   "min_words": 600
+  },
+  "rhythm_shift": {
+   "label": "length shift between consecutive sentences (/ mean)",
+   "value": 0.72,
+   "low": 0.55,
+   "high": 0.92,
+   "min_words": 600
+  },
+  "paragraph_words_median": {
+   "label": "median paragraph length, words",
+   "value": 25,
+   "low": 9,
+   "high": 50,
+   "min_words": 500
+  },
+  "one_sentence_paragraph_share": {
+   "label": "share of one-sentence paragraphs",
+   "value": 0.33,
+   "low": 0.15,
+   "high": 0.52,
+   "min_words": 600
+  },
+  "dialogue_paragraph_share": {
+   "label": "share of paragraphs with dialogue",
+   "value": 0.42,
+   "low": 0.15,
+   "high": 0.8,
+   "min_words": 800
+  },
+  "dialogue_word_share": {
+   "label": "share of words spoken in dialogue",
+   "value": 0.22,
+   "low": 0.07,
+   "high": 0.5,
+   "min_words": 800
+  },
+  "plain_tag_share": {
+   "label": "share of plain speech tags (said, asked)",
+   "value": 0.6,
+   "low": 0.35,
+   "high": 0.95,
+   "min_words": 1200
+  },
+  "comma_per_1000": {
+   "label": "commas per 1000 words",
+   "value": 115,
+   "low": 85,
+   "high": 150,
+   "min_words": 1000
+  },
+  "semicolon_per_1000": {
+   "label": "semicolons per 1000 words",
+   "value": 1.5,
+   "low": 0,
+   "high": 5,
+   "min_words": 1500
+  },
+  "colon_per_1000": {
+   "label": "colons per 1000 words",
+   "value": 2.5,
+   "low": 0.5,
+   "high": 6,
+   "min_words": 1500
+  },
+  "dash_per_1000": {
+   "label": "dashes in the prose per 1000 words",
+   "value": 5,
+   "low": 1.5,
+   "high": 10,
+   "min_words": 1500
+  },
+  "ellipsis_per_1000": {
+   "label": "ellipses per 1000 words",
+   "value": 1.5,
+   "low": 0,
+   "high": 4,
+   "min_words": 1500
+  },
+  "exclamation_per_1000": {
+   "label": "exclamation marks per 1000 words",
+   "value": 2.5,
+   "low": 0.5,
+   "high": 7,
+   "min_words": 1500
+  },
+  "question_per_1000": {
+   "label": "question marks per 1000 words",
+   "value": 6,
+   "low": 2,
+   "high": 14,
+   "min_words": 1500
+  },
+  "parenthesis_per_1000": {
+   "label": "parentheses per 1000 words",
+   "value": 0.3,
+   "low": 0,
+   "high": 1.5,
+   "min_words": 1500
+  },
+  "simile_per_1000": {
+   "label": "simile markers per 1000 words",
+   "value": 1.4,
+   "low": 0.3,
+   "high": 3.2,
+   "min_words": 1500
+  },
+  "emphasis_per_1000": {
+   "label": "emphasized words per 1000 words",
+   "value": 0.3,
+   "low": 0,
+   "high": 1.5,
+   "min_words": 1500
+  },
+  "word_len_mean": {
+   "label": "mean word length, letters",
+   "value": 5.0,
+   "low": 4.7,
+   "high": 5.35,
+   "min_words": 800
+  },
+  "mattr": {
+   "label": "vocabulary variety (MATTR, 500-word window)",
+   "value": 0.64,
+   "low": 0.58,
+   "high": 0.7,
+   "min_words": 1000
+  },
+  "opener_pronoun_share": {
+   "label": "sentences opening on a pronoun",
+   "value": 0.14,
+   "low": 0.05,
+   "high": 0.25,
+   "min_words": 600
+  },
+  "opener_conjunction_share": {
+   "label": "sentences opening on a conjunction",
+   "value": 0.1,
+   "low": 0.04,
+   "high": 0.18,
+   "min_words": 800
+  }
+ },
+ "chapters_measured": 0,
+ "note": "Hand-set ranges for contemporary literary prose, checked against public-domain books (Austen, Fitzgerald, Hemingway; Chekhov for Russian). Not measured from any one author and not the author's voice."
+}
