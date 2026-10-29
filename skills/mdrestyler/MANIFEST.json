@@ -7,7 +7,7 @@
  "scripts/mdrestyler.py": "208402b4c651515c980b91af4358c4871d1c3a9614e7267d6d9563c7607f5ce8",
  "scripts/mdrestyler/__init__.py": "5f1f661b44848eb1b001e173477ba1828d532bb45c4e51b032db19eec9233c65",
  "scripts/mdrestyler/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
- "scripts/mdrestyler/_build.json": "2fa686d1f75a317227d3d13541d7d4763475702b53f7b268c2bd5f5f1ccfb743",
+ "scripts/mdrestyler/_build.json": "e0956e2f16468b71f8f94e5ed0909e5f663f8f564b6899fdd95145c991703bd9",
  "scripts/mdrestyler/check.py": "c5ef960af2dfa01b77ec268203a2bf2e6592fa8eb9e7b4a21d4abc69fa3303c6",
  "scripts/mdrestyler/cli.py": "6ba5953d10d802a0d11e00dc339954fd938432dd90d91c2c4fe253023b5cea9a",
  "scripts/mdrestyler/container.py": "650fa2e76c064c5ac0646c22b538e84ebc3ef2b36878d84d168eaedf128ef726",
