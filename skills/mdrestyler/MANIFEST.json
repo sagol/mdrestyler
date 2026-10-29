@@ -1,14 +1,14 @@
 {
  "SKILL.md": "41ace1655e62c1ad148521f856dd242c540854b56620c2692ca2d441aa5ca43c",
  "references/drafting.md": "bb297b8962bd8ea74e4ebd22fb29b87182b76c711ed3d310f3e03bcd3155c74a",
- "references/measures.md": "f3aaa0847d32decaeba0190312190762940d7c43b45faa789de601e9b0499403",
- "references/profile.md": "31120fa686ff3934ef67c3a02437bf5b7199faaded388aceb432bcf4c057e4d8",
+ "references/measures.md": "778af042963063cf516dc418baed5c2eba76b0e6e9f9f9355521967e4ad2ba49",
+ "references/profile.md": "2edfd226910fe52e8a1bb223ea3522355e13c08d9ef8412eaeedb05cf4227d10",
  "references/restyle.md": "007ff833dc06427cad002a24b7e71bf506087c4ca831c59d7e6d194c9444e6a4",
  "scripts/mdrestyler.py": "208402b4c651515c980b91af4358c4871d1c3a9614e7267d6d9563c7607f5ce8",
  "scripts/mdrestyler/__init__.py": "5f1f661b44848eb1b001e173477ba1828d532bb45c4e51b032db19eec9233c65",
  "scripts/mdrestyler/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
  "scripts/mdrestyler/_build.json": "2fa686d1f75a317227d3d13541d7d4763475702b53f7b268c2bd5f5f1ccfb743",
- "scripts/mdrestyler/check.py": "ac391cde785ed16661cb9d6d9a7dbd5021d543c966b0f4ddfcd055f201f47403",
+ "scripts/mdrestyler/check.py": "c5ef960af2dfa01b77ec268203a2bf2e6592fa8eb9e7b4a21d4abc69fa3303c6",
  "scripts/mdrestyler/cli.py": "6ba5953d10d802a0d11e00dc339954fd938432dd90d91c2c4fe253023b5cea9a",
  "scripts/mdrestyler/container.py": "650fa2e76c064c5ac0646c22b538e84ebc3ef2b36878d84d168eaedf128ef726",
  "scripts/mdrestyler/defaults/AUTHOR_PROFILE.en.md": "64768d4ae17754a7baa0d62bab837dd639a0d2ed50aff78b2d31b28c2b7e4170",
@@ -20,6 +20,6 @@
  "scripts/mdrestyler/metrics.py": "dbbe1d06c56e59f90e1bc2b7e58f0a44cf7016eed9038f02eb8b6abfe2df286e",
  "scripts/mdrestyler/names.py": "af86f32242207768205c509615035dfd2590402f0ec220bdf5ae986c7a198da9",
  "scripts/mdrestyler/profile.py": "cb0a79a16003e9449c67b29f63950bf0005eb0e8c5e61df486883b45f45567f9",
- "scripts/mdrestyler/scan.py": "9892cfdb9074295abe6529894fc47b2f1242bf52d8b1229e6732320bfc41a8b1",
+ "scripts/mdrestyler/scan.py": "4a34938b702a7d606a1f4c4762ca5f980312383e23d22fee829d3a0cb7d91f34",
  "scripts/mdrestyler/styles.py": "99604ca35a91ab3a8f92db99d376e809aa27782306e0217dc29409cc909a57bb"
 }

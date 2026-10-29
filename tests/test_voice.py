@@ -1741,3 +1741,56 @@ class CalibrationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('part.md | n/a | 0 | n/a | not measured', result.stdout)
         self.assertRegex(result.stdout, r'ru\.md \| P1 \|')
+
+
+class SourceReadingTests(unittest.TestCase):
+    """What a scanned source's guard holds, and which distances a profile from another measure method can give."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+
+    def test_hidden_words_in_an_own_book_never_free_the_visible_run_around_them(self):
+        seen = ['amberwick', 'bristlequay', 'cobaltine', 'dunmarrow', 'embervale', 'fallowmere', 'gildenreach', 'hollowmast',
+                'ironquill', 'jasperfen', 'kestrelmoor', 'lanternby', 'mirefold', 'nettlecrest', 'oakenshaw']
+        bk = self.root / 'own-book'
+        bk.mkdir()
+        text = ('# Mine\n\n' + '\n\n'.join(prose('en', 'long', 80)) + '\n\n'
+                + ' '.join(seen[:7]) + ' <span hidden>secret diversion</span> ' + ' '.join(seen[7:]) + '.\n')
+        (bk / '01.md').write_text(text)
+        (bk / 'README.md').write_text('# Mine\n\n## Contents\n\n1. [Mine](01.md)\n')
+        eligibility = self.root / 'eligibility.json'
+        eligibility.write_text(json.dumps({'decision': 'Author confirmation 2026-10-01', 'language': 'en', 'order': ['01.md'], 'title': 'Mine',
+                                           'units': {'01.md': {'eligible': True, 'sha256': hashlib.sha256(text.encode()).hexdigest(), 'exclude': []}}}))
+        out = self.root / 'profile'
+        result = run('scan', '--own-book', bk, '--eligibility', eligibility, '--out', out, '--work', self.root / 'work')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        draft = self.root / 'draft.md'
+        draft.write_text(' '.join(seen) + '.\n')
+        report = json.loads(run('check', '--profile', out, draft, '--json').stdout)
+        self.assertTrue(report['copy_guard_hits'], report['copy_guard'])
+
+    def test_a_calibration_on_measures_read_by_another_method_gives_no_distance(self):
+        chapters = [(f'Глава {i + 1}', prose('ru', 'long', 30 + 6 * i, i * 100) + prose('ru', 'short', 10 * i + 5, i * 100 + 50)) for i in range(6)]
+        source = make_epub(self.root / 'ru.epub', chapters, lang='ru', title='Моя', author='Автор')
+        out = self.root / 'profile'
+        result = run('scan', '--own', source, '--out', out, '--work', self.root / 'work')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        path = out / 'author-profile.ru.json'
+        profile = json.loads(path.read_text())
+        changed = vm.METHOD_CHANGES[('ru', 2)]
+        self.assertTrue(changed & set(profile['calibration']['centers']))
+        draft = self.root / 'draft.md'
+        draft.write_text('# Один\n\n' + '\n\n'.join(prose('ru', 'short', 80, seed=7)) + '\n')
+        current = json.loads(run('check', '--profile', out, draft, '--json').stdout)
+        self.assertIsNotNone(current['voice_distance'])
+        path.write_text(json.dumps(dict(profile, measure_method=1)))
+        older = json.loads(run('check', '--profile', out, draft, '--json').stdout)
+        self.assertIsNone(older['voice_distance'])
+        self.assertTrue(older['calibration'].startswith('incomparable'), older['calibration'])
+        for name, reg in older['registers'].items():
+            with self.subTest(register=name):
+                self.assertIsNone(reg['voice_distance'])
+                if changed & set((profile['registers'][name].get('calibration') or {}).get('centers', ())):
+                    self.assertTrue(reg['calibration'].startswith('incomparable'), reg['calibration'])

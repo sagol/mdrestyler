@@ -54,7 +54,7 @@ Then scan with `--own-book BOOK --eligibility FILE`. Only eligible units are mea
 ## Reference books
 
 - A profile keeps measurements and described features of reference books, never their text.
-- The copy guard keeps the smallest hash in every eight consecutive 8-word runs of each book. It checks every run of the draft's words three ways: as a reader sees them; with markup removed but hidden words kept; and as raw text. Any passage of fifteen space-delimited words or more that a draft shares with a scanned book is found when it runs unbroken in one of the three; a shorter one only when one of its hashes was kept. It guards against copying, not concealment, and it is not proof of originality.
+- The copy guard keeps the smallest hash in every eight consecutive 8-word runs of each book. An own Markdown book is winnowed twice, with its hidden words and as a reader sees it, and both sets of hashes are kept. It checks every run of the draft's words three ways: as a reader sees them; with markup removed but hidden words kept; and as raw text. Any passage of fifteen space-delimited words or more that a draft shares with a scanned book is found when it runs unbroken in one of the three; a shorter one only when one of its hashes was kept. It guards against copying, not concealment, and it is not proof of originality.
 - A text never names a reference author or says it imitates one. Which books shaped a profile is recorded in the profile alone.
 - A profile in a public repository is public, source list included.
 

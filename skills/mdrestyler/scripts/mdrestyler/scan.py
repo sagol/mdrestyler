@@ -375,6 +375,12 @@ def guard_reading(text):
     return [b.strip() for b in re.split(r'\n\s*\n', visible_text(text, every_word=True)) if b.strip()]
 
 
+def seen_reading(text):
+    """A unit's text as a reader sees it, hidden words left out: winnowed apart from guard_reading, so the hidden words
+    that reading puts between visible ones never take away the guard's hold on the visible run around them."""
+    return [b.strip() for b in re.split(r'\n\s*\n', visible_text(text)) if b.strip()]
+
+
 def script_of(tags, lang, declared=()):
     """The script of the first of tags (the author's, then the import's) of the language lang that names one (sr-Latn:
     latin), read before a tag is reduced to its language; else the one script the source's declared tags give lang, a
@@ -428,7 +434,7 @@ def read_imported_held(held, book, eligibility_path, budget):
     unknown = sorted(set(units) - set(order))
     if unknown:
         raise ValueError(f'{eligibility_path}: names units that are not in {where}: {", ".join(unknown)}')
-    chapters, unit_hashes, reading_order, measured, excluded_count, source_section = [], {}, [], [], {}, 0
+    chapters, unit_hashes, reading_order, seen_order, measured, excluded_count, source_section = [], {}, [], [], [], {}, 0
     for path in order:
         data = read_unit(held, book, path, budget)   # counted before it is read
         unit_hashes[path] = hashlib.sha256(data).hexdigest()
@@ -444,6 +450,7 @@ def read_imported_held(held, book, eligibility_path, budget):
                 excluded_count[path] = len(excluded)
         matched = set()
         reading_order += guard_reading(text)   # every word a reader can meet, in manuscript order, excluded passages in place
+        seen_order += seen_reading(text)
         for ch in read_markdown(text, excluded):   # an excluded passage is cut out of its paragraph, the rest measured
             source_section += 1   # source sections only; synthetic guard entries below do not advance the locator
             kept, apart = ch['paragraphs'], ch.get('apart', [])
@@ -479,7 +486,8 @@ def read_imported_held(held, book, eligibility_path, budget):
             # units and how many passages each left out (counts only: the profile never holds the book's text)
             'eligibility': {'file_sha256': hashlib.sha256(eligibility_bytes).hexdigest(), 'measured': measured,
                             'excluded_passages': excluded_count},
-            'reading_order': reading_order}   # the guard reads every unit in order, excluded passages in place
+            'reading_order': reading_order,   # the guard reads every unit in order, excluded passages in place
+            'seen_order': seen_order}   # and, winnowed apart, as a reader sees it
     return meta, chapters
 
 
@@ -536,6 +544,8 @@ def scan(own, reference, out, work, min_words=3000, replace=False, text_mb=TEXT_
                 budget.take_words(len(words), path)
                 stream += words
             streams.append(stream)
+            if meta.get('seen_order') is not None:   # words the reading above already counted, so not counted again
+                streams.append([w for text in meta['seen_order'] for w in words_of(text)])
             for lang, part in split_by_language(chapters, meta['language'], meta.get('script')).items():
                 buckets.setdefault(lang, []).append((source, part))
     report = {'profiles': {}, 'skipped': {}}

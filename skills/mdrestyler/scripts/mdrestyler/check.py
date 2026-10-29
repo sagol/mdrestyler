@@ -57,7 +57,7 @@ sys.dont_write_bytecode = True   # an installed skill folder stays as installed:
 
 from . import names as host
 from . import profile as profiles
-from .metrics import (CAUGHT, MEASURE_METHOD, ONLY_EVERY, REGISTER_MIN_WORDS, REGISTERS, SCENE_BREAK, SHINGLE, calibrated, words_of, compare, interruptions, measure, mostly_cyrillic,
+from .metrics import (CAUGHT, MEASURE_METHOD, ONLY_EVERY, REGISTER_MIN_WORDS, REGISTERS, SCENE_BREAK, SHINGLE, calibrated, words_of, compare, interruptions, measure, method_gap, mostly_cyrillic,
                            read_markdown, register_chapters, required_lang, shingle_hashes, tag_script, tidy, visible_text, word_spans, unsegmented)
 
 
@@ -314,13 +314,15 @@ def check(candidates, profile_path, lang=None, accepted=None):
                     exempt += 1
     rows = compare(measures, profile)
     cal = profile.get('calibration')
-    voice_distance = calibrated(measures, cal)
+    gap = method_gap(profile)
+    pooled_blocked = method_blocked(cal, gap)
+    voice_distance = None if pooled_blocked else calibrated(measures, cal)
     registers = {}
     for name, reg in (profile.get('registers') or {}).items():
         part = measure(register_chapters(chapters, lang, name), lang)
         if part['words']:
             reg_rows = compare(part, {**profile, 'targets': reg['targets']})
-            reg_distance, reg_status = register_distance(part, reg, name)
+            reg_distance, reg_status = register_distance(part, reg, name, gap)
             registers[name] = {'words': part['words'], 'voice_distance': reg_distance, 'calibration': reg_status,
                                'calibration_quantiles': reg['calibration']['quantiles'] if (reg.get('calibration') or {}).get('status') == 'available' else None,
                                'measures': [{'measure': k, 'label': lab, 'value': v, 'low': lo, 'high': hi, 'status': st} for k, lab, v, lo, hi, st in reg_rows]}
@@ -346,7 +348,8 @@ def check(candidates, profile_path, lang=None, accepted=None):
         'copy_guard_hits': hits,
         'measures': [{'measure': k, 'label': lab, 'value': v, 'low': lo, 'high': hi, 'status': st} for k, lab, v, lo, hi, st in rows],
         'voice_distance': voice_distance,
-        'calibration': ('available' if voice_distance else 'the draft lacks a measure the calibration uses (too short or no dialogue)') if cal and cal.get('status') == 'available'
+        'calibration': (INCOMPARABLE_PANEL if pooled_blocked else 'available' if voice_distance else 'the draft lacks a measure the calibration uses (too short or no dialogue)')
+                       if cal and cal.get('status') == 'available'
                        else cal.get('reason', 'unavailable') if cal else 'not in this profile: rescan its sources with this ' + host.PRODUCT + ' to add it',
         'calibration_quantiles': cal.get('quantiles') if cal and cal.get('status') == 'available' else None,
         'registers': registers,
@@ -357,13 +360,24 @@ def check(candidates, profile_path, lang=None, accepted=None):
     }
 
 
-def register_distance(part, reg, name):
+INCOMPARABLE_PANEL = 'incomparable: the calibration uses a measure this tool reads by another method (rescan the profile)'
+
+
+def method_blocked(cal, gap):
+    """Whether an available calibration uses a measure the profile's scan read by another method: its centers and
+    scales then mean something else, and no distance on that panel can be compared."""
+    return bool(cal and cal.get('status') == 'available' and gap & set(cal['centers']))
+
+
+def register_distance(part, reg, name, gap):
     """One register's calibrated distance and its status: available, or why it is not measured."""
     cal = reg.get('calibration')
     if not cal:
         return None, 'not in this profile: rescan its sources with this ' + host.PRODUCT + ' to add it'
     if cal.get('status') != 'available':
         return None, cal.get('reason', 'unavailable')
+    if method_blocked(cal, gap):
+        return None, INCOMPARABLE_PANEL
     if part['words'] < REGISTER_MIN_WORDS[name]:
         return None, f'{part["words"]} words of {name}; its calibration measured chapters with {REGISTER_MIN_WORDS[name]} or more'
     d = calibrated(part, cal)
