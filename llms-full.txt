@@ -1,0 +1,551 @@
+# mdrestyler: full reference for LLMs and coding agents
+
+- Package: `mdrestyler`
+- Version: `0.1.1`
+- License: MIT
+- Author: Taras Baranyuk (https://github.com/sagol)
+- Repository: https://github.com/sagol/mdrestyler
+- Site: https://sagol.github.io/mdrestyler/
+- PyPI: https://pypi.org/project/mdrestyler/
+- Releases: https://github.com/sagol/mdrestyler/releases
+- Python: 3.10 or later, standard library only, no dependencies
+- Languages: English and Russian word lists; other languages get the language-neutral measures
+
+The measures locate drift. A reading decides. mdrestyler never picks a take or accepts a change by the number.
+
+---
+
+## 1. What it does
+
+mdrestyler builds a voice profile from DRM-free EPUBs, or from an author's own Markdown book, and then:
+
+- checks a draft against it: the voice distance, narration and dialogue measured apart, and each measure against its range;
+- runs a copy guard, so a draft that repeats a scanned book is caught;
+- ranks several takes of one unit, and tables a whole book unit by unit;
+- comes with an agent skill that runs a need-first restyle: assess every unit, restyle only those that need it, pilot first, choose one whole take by reading, and check that nothing but the voice changed.
+
+Who it is for: writers, editors and authors restyling or drafting a Markdown book toward a voice, and AI coding agents working for them.
+
+---
+
+## 2. Install
+
+### PyPI
+
+```bash
+pip install mdrestyler
+mdrestyler --version
+mdrestyler --help
+```
+
+The wheel is also attached to each release: https://github.com/sagol/mdrestyler/releases
+
+### Agent skill, nothing installed
+
+Copy `skills/mdrestyler/` into the agent's skills folder. From inside that folder the command is `python3 scripts/mdrestyler.py COMMAND`; it is the same command as the installed `mdrestyler COMMAND`.
+
+```bash
+git clone --branch v0.1.1 https://github.com/sagol/mdrestyler.git
+cd mdrestyler
+python3 skills/mdrestyler/scripts/mdrestyler.py --help
+python3 skills/mdrestyler/scripts/mdrestyler.py verify
+```
+
+`verify` checks the skill folder against its manifest. `--version` prints the version, the source commit and the manifest's digest, which is what products built on mdrestyler pin.
+
+### GitHub Action
+
+```yaml
+- uses: sagol/mdrestyler@v0.1.1
+  with:
+    command: check
+    args: --profile voice chapters/01.md --strict
+```
+
+| Input | Default | Meaning |
+|---|---|---|
+| `command` | `check` | The mdrestyler command to run, such as check, rank, book, verify or profile. |
+| `args` | empty | The command's arguments as one string, split like a shell would. |
+| `working-directory` | `.` | The folder to run in; paths in args are relative to it. |
+
+It is a composite action that runs the skill folder's `scripts/mdrestyler.py` with the runner's `python3` (or `python`) and exits with the command's status, so a copy-guard hit (exit 1) fails the job.
+
+A book table in CI:
+
+```yaml
+- uses: sagol/mdrestyler@v0.1.1
+  with:
+    command: book
+    args: manuscript --profile voice --list units.txt --within p90
+```
+
+---
+
+## 3. Commands
+
+| Command | Does |
+|---|---|
+| `scan` | builds a profile, one per language, from `--own` and `--reference` EPUBs or `--own-book BOOK --eligibility FILE` |
+| `check` | measures drafts against `--profile FOLDER` and runs the copy guard; `--accepted BASE` for a revision of one unit; exit 1 on a shared run |
+| `rank` | orders two or more takes of one unit |
+| `book` | checks every unit a `--list` file names, one row each, with a restyle reading against `--within` |
+| `install` | installs a profile into a profile folder, keeping the earlier one under `history/` |
+| `profile validate` | reports a profile folder's status, or why it is not valid |
+| `verify` | checks the skill folder against its manifest; `--expect DIGEST` checks the digest too |
+
+### 3.1 `mdrestyler scan`
+
+Syntax: `mdrestyler scan [--own EPUB] [--reference EPUB] [--own-book BOOK] [--eligibility FILE] --out OUT --work WORK [--min-words N] [--replace] [--max-expanded-mb N]`
+
+| Flag | Meaning |
+|---|---|
+| `--own EPUB` | a book by the author (may be quoted in the profile); repeatable |
+| `--reference EPUB` | a book by another writer (measured and described, never quoted); repeatable |
+| `--own-book BOOK` | the author's own Markdown book folder, read from its units (needs `--eligibility`) |
+| `--eligibility FILE` | the author's confirmation of the book's original units and passages |
+| `--out OUT` | required: folder for the profile files |
+| `--work WORK` | required: folder outside the book for the sample passages |
+| `--min-words N` | fewest words in a language to build its profile (default 3000) |
+| `--replace` | replace a profile already in `--out`, moving its files to `history/` first |
+| `--max-expanded-mb N` | expanded EPUB text the scan may read across all its books (default 64) |
+
+Give at least one book with `--own`, `--own-book` or `--reference`. `--own-book` and `--eligibility` go together. For each language with enough text it writes `author-profile.<lang>.json`, `copy-guard.<lang>.json` and a draft `AUTHOR_PROFILE.<lang>.md` into `--out`, and `samples.<lang>.md` into `--work`. Delete the samples once the profile is written. It prints a JSON report with `profiles` and `skipped`.
+
+Exit status: `0` built; `1` refused (DRM, a size limit, an existing profile, a folder inside a book, a destination that is a symbolic link, the same book given twice) or no language had enough text; `2` on errors, such as a damaged archive, an input that is not a regular file, or a language tag that names no language.
+
+```bash
+mdrestyler scan --own mine.epub --reference theirs.epub --out profile --work work
+mdrestyler scan --own-book my-book --eligibility eligibility.json --out profile --work work
+```
+
+### 3.2 `mdrestyler check`
+
+Syntax: `mdrestyler check --profile FOLDER CANDIDATE.md [MORE.md ...] [--lang LANG] [--json] [--strict] [--accepted BASE]`
+
+| Flag | Meaning |
+|---|---|
+| `--profile PROFILE` | the profile folder, or an `author-profile.<lang>.json` file |
+| `--lang LANG` | profile language (default: from the draft's script) |
+| `--json` | print the report as JSON |
+| `--strict` | exit 1 when a measure is outside its range and not marked weak, or could not be compared with a profile scanned by another measure method |
+| `--accepted ACCEPTED` | a revision's own accepted base: the unit's exact accepted text before the revision |
+| `--rank` | check each file alone as a take of the same unit and order the takes (what `rank` runs) |
+| `--book BOOK` | check every unit in the book's reading order (what `book` runs) |
+| `--list LIST` | with `--book`: a file naming the units in reading order, one path per line, relative to the book |
+| `--within WITHIN` | with `--book`: `p50`, `p90` (default), `max` of the narration calibration, or a number |
+
+Without `--lang`, the language is the one profile in the folder whose recorded scripts (Latin, Cyrillic) include the draft's; when several profiles do, pass `--lang`.
+
+Exit status: `0` measured; `1` when the copy guard finds a run (or, with `--strict`, a measure is outside and not marked weak, or the profile was scanned by another measure method, so a target could not be compared); `2` on errors, including a profile or guard that is not valid.
+
+```bash
+mdrestyler check --profile my-book/voice chapter-01.md
+mdrestyler check --profile my-book/voice chapter-01.md chapter-02.md --lang en --json --strict
+mdrestyler check --profile my-book/voice revised.md --accepted base.md
+```
+
+### 3.3 `mdrestyler rank`
+
+Syntax: `mdrestyler rank --profile FOLDER TAKE1.md TAKE2.md [TAKE3.md ...] [--lang LANG] [--json]`
+
+Each file is one take of the same unit, checked alone. Takes with a copy-guard run come last, then the order follows the narration distance, the voice distance and the number of measures outside. The order informs a reading and chooses nothing. `rank` needs two takes or more and no `--accepted`; check a single take with `check`.
+
+Exit status: `0` when the ranking is printed (a ranking informs; the per-candidate checks gate); `2` on errors.
+
+```bash
+mdrestyler rank --profile my-book/voice take-1.md take-2.md take-3.md
+```
+
+### 3.4 `mdrestyler book`
+
+Syntax: `mdrestyler book BOOK --profile FOLDER --list UNITS [--within p90] [--lang LANG] [--json]`
+
+The list names the units in reading order, one path per line relative to the book; blank lines and `#` lines are skipped. A unit outside the book, missing, named twice or not Markdown stops the table. Each unit gets one row: voice, narration and dialogue distances, where they fall among the source chapters, measures outside and copy-guard runs. A unit with no prose, such as a part title, is listed as not measured.
+
+The last column reads each unit's narration distance against a threshold: the narration calibration's 90th percentile, or `--within p50`, `max` or a number. *Beyond* means the unit's narration lies farther from the profile than the sources' own chapters mostly do, so read it first. *Within* means nearer. *By reading* means too little narration to measure, or no narration calibration. The column orders a reading; it decides nothing. The JSON keeps the selector and the exact value.
+
+Exit status: `0` when the table is printed; `2` when the table stops (a bad unit list or an invalid profile, for example).
+
+```bash
+mdrestyler book my-book --profile my-book/voice --list units.txt --within p90
+mdrestyler book my-book --profile my-book/voice --list units.txt --within p90 --json
+```
+
+### 3.5 `mdrestyler install`
+
+Syntax: `mdrestyler install FOLDER [SOURCE] --lang LANG [--replace]`
+
+| Argument | Meaning |
+|---|---|
+| `FOLDER` | the profile folder to install into |
+| `SOURCE` | a folder a scan wrote, or another profile folder (default: the shipped default for `--lang`) |
+| `--lang LANG` | required: profile language, such as `en` or `ru` |
+| `--replace` | replace an installed profile other than the unedited default, keeping its files under `history/` |
+
+Installs `AUTHOR_PROFILE.<lang>.md`, `author-profile.<lang>.json` and, when present, `copy-guard.<lang>.json`. The shipped default, unedited, is replaced freely. Anything else already installed is replaced only with `--replace`, and its files move to `FOLDER/history/<time>/` first. Prints JSON with `language`, `installed`, `status` and `kept`.
+
+Exit status: `0` installed; `1` not installed (for example, a profile already there and no `--replace`); `2` on a usage error.
+
+```bash
+mdrestyler install my-book/voice profile --lang en
+mdrestyler install my-book/voice --lang ru
+```
+
+### 3.6 `mdrestyler profile validate`
+
+Syntax: `mdrestyler profile validate FOLDER --lang LANG`
+
+Prints JSON with `status` (approved, draft or default) and `revision` (the prose profile, the measures and the guard, each with its file and SHA-256).
+
+Exit status: `0` valid; `2` not valid, or `--lang` missing.
+
+```bash
+mdrestyler profile validate my-book/voice --lang en
+```
+
+### 3.7 `mdrestyler verify`
+
+Syntax: `mdrestyler verify [--expect DIGEST]`
+
+Checks the skill folder the command runs from against its `MANIFEST.json`: every listed file present and unchanged, and no unlisted file. `--expect DIGEST` also checks the manifest's SHA-256. Prints JSON with `root`, `manifest_sha256` and `ok`. Run it from a skill folder (`python3 scripts/mdrestyler.py verify`); an installed wheel has no skill folder to verify.
+
+Exit status: `0` matches; `1` a file is missing, changed or unlisted, or the digest differs from `--expect`; `2` not run from a skill folder.
+
+```bash
+python3 skills/mdrestyler/scripts/mdrestyler.py verify
+python3 skills/mdrestyler/scripts/mdrestyler.py verify --expect DIGEST
+```
+
+### 3.8 `mdrestyler --version`
+
+Prints one line: the name, the version, the source commit and the manifest digest. Exit status `0`.
+
+---
+
+## 4. Reading a check
+
+The report names each draft's SHA-256 and the profile's revision, then gives:
+
+- **Status** of the profile: approved, draft or default.
+- **Copy guard:** runs of 8 words the draft shares with a scanned book. A hit exits 1 and blocks the draft.
+- **Targets:** each measure's value against the profile's range: within, near, outside or not measured, marked weak when the draft is too short for it.
+- **Voice distance**, when the profile holds a calibration: the draft's mean robust distance from the profile's sources, and the share of the sources' own chapters that lie farther from the rest. A draft farther than every source chapter is a finding. Under 1,200 words it reads less reliably.
+- **Narration and dialogue apart**, when the profile holds their ranges: the author's words and the spoken words, each against its own ranges. Each also gets its own distance when the profile calibrates it and the draft holds 600 words of narration or 400 of dialogue.
+
+**Read by the narration distance.** The pooled distance also weighs how much of a unit is dialogue, which follows composition and length more than voice, so it is a poor aim for rewording. In one test, on a chapter of a narration-led novel against a dialogue-led reference, a restyle moved the narration distance from 1.21 to 0.93 while the pooled distance went from 1.15 to 1.14.
+
+**A revision of one unit** (`--accepted base.md`): text the revision keeps unchanged, in place and unambiguous counts as the base's own, not a hit. Base text it repeats more often than the base is a hit at every copy, moved or ambiguous base text is uncertain, and inserted text stays checked. The alignment stops at 20,000 words or 10 seconds; past that nothing is exempt. The report names the base's SHA-256.
+
+### Measures
+
+Measured in narration and dialogue as the profile records them, among others: median, mean and 90th-percentile sentence length; share of sentences of 6 words or fewer and of 30 words or more; variation of sentence length; length shift between consecutive sentences; median paragraph length; share of one-sentence paragraphs; share of paragraphs with dialogue; share of words spoken in dialogue; share of plain speech tags; commas, semicolons, colons, dashes, ellipses, exclamation marks, question marks, parentheses and simile markers per 1,000 words; mean word length; vocabulary variety (MATTR, 500-word window); -ly adverbs per 1,000 words; sentences opening on a pronoun, a conjunction or an article; first- and third-person pronouns in narration; past-tense share of tense markers in narration.
+
+### JSON fields of a check (`--json`)
+
+Top-level keys include `language`, `candidates` (each `file` and `sha256`), `words`, `profile` (the revision files and hashes, `status`, approval and delegation notes), `copy_guard`, `copy_guard_hits`, `copy_guard_uncertain`, `accepted_base`, `measures` (each `measure`, `label`, `value`, `low`, `high`, `status`), `voice_distance` (`distance`, `measures_used`, `closer_than_share`, `beyond_sources`, `source_chapters`), `calibration_quantiles` (`p10`, `p50`, `p90`, `max`), `registers` (`narration`, `dialogue`) and `register_calibrations`.
+
+### Calibration
+
+A scan calibrates each source chapter of 1,200 words or more against the median and robust spread of all the others, on one panel of measures every source chapter has and that still vary. Each distance is capped at six spreads and averaged. It needs five such chapters, and records why when it has fewer. Narration and dialogue are calibrated the same way on their own chapters (600 and 400 words), and dialogue share is in neither panel. A profile scanned before calibration has none; rescan its sources to add it. The idea of reading a draft against the author's own held-out text, and of measuring style by mode, comes from AuthorStyle by Fernando Paladini (MIT); the implementation is mdrestyler's own.
+
+---
+
+## 5. Profiles
+
+| File | Holds |
+|---|---|
+| `AUTHOR_PROFILE.<lang>.md` | the described voice and a table of the measured targets; its status: default, draft, or approved |
+| `author-profile.<lang>.json` | the measures, target ranges, function-word fingerprint, calibration and narration and dialogue ranges, with each source's hash; schema `mdrestyler-author-profile/1` |
+| `copy-guard.<lang>.json` | winnowed hashes of the scanned books' 8-word runs, no text; schema `mdrestyler-copy-guard/1`. The measures record this file's SHA-256 (`copy_guard_sha256`), so a guard from other books, or an edited one, is refused |
+| `history/<time>/` | earlier profiles, kept when one is replaced |
+
+The three files' hashes together are the profile's revision; every report names them. A report is stale for any other revision.
+
+mdrestyler ships a default for English and for Russian: a starting voice for contemporary literary prose, built from no book. It is recognized by its exact bytes. An edited default, or one with a guard, reads as a draft.
+
+Languages are named by two-letter code (`AUTHOR_PROFILE.en.md`), or a three-letter code when there is none. `--lang` takes a code such as `en`, `en-GB`, `eng` or `ru`.
+
+### Build a profile
+
+1. Collect DRM-free EPUBs: the author's own books (`--own`), books by other writers the author chooses (`--reference`), or both. An encrypted book is refused; never remove DRM.
+2. Scan into a profile folder, with the samples in a separate work folder. Keep both outside any manuscript.
+3. Write the described voice in `AUTHOR_PROFILE.<lang>.md`. Quote only books marked own, and briefly. Never paste a sample passage into the profile.
+4. Delete the samples file. Show the profile to the author and record the corrections.
+5. When the author approves it, write the date on the one approval field under `## Approval` (or `## Утверждение`), such as `- Approved by the author on: 2026-10-03`. Only that one field approves.
+6. Install it. A draft can be installed before approval and stays a draft.
+
+Describe what the voice does, not only what it avoids. Keep observation, inference and the author's wishes apart, and mark each point. For a translated reference, describe the translation's wording.
+
+**Delegated approval.** A product that keeps decisions for the author may let a field read `Approved under delegation: <decision ID>`. mdrestyler treats such a field as a draft unless the product has configured its check (`mdrestyler.names.configure(approver=…)`). Reports name a delegated approval as delegated, never as the author's.
+
+### The author's own Markdown book
+
+Write the author's confirmation as an eligibility file, then scan with `--own-book BOOK --eligibility FILE`:
+
+```json
+{"decision": "Author's confirmation, 2026-10-01",
+ "language": "en",
+ "title": "The book's title",
+ "order": ["01-first.md", "02-second.md"],
+ "units": {"01-first.md": {"eligible": true, "sha256": "<the unit's SHA-256 at confirmation>", "exclude": ["a passage that is not theirs"]},
+           "02-second.md": {"eligible": false}}}
+```
+
+Only eligible units are measured and sampled, without their excluded passages. Every unit in `order`, notes included, feeds the copy guard. A unit whose bytes changed since its confirmation, an exclusion that matches nothing, or a unit named twice stops the scan.
+
+### Reference books and the copy guard
+
+- A profile keeps measurements and described features of reference books, never their text. Only the author's own books may be quoted in it.
+- The copy guard keeps the smallest hash in every eight consecutive 8-word runs of each book. An own Markdown book is winnowed twice, with its hidden words and as a reader sees it. It checks every run of the draft's words three ways: as a reader sees them; with markup removed but hidden words kept; and as raw text. Any passage of fifteen space-delimited words or more that a draft shares with a scanned book is found when it runs unbroken in one of the three; a shorter one only when one of its hashes was kept. It guards against copying, not concealment, and it is not proof of originality.
+- A text never names a reference author or says it imitates one. Which books shaped a profile is recorded in the profile alone.
+- A profile in a public repository is public, source list included.
+
+A change to an approved profile is the author's decision. It stales every check and review made against the old revision, and so does a rebuilt guard.
+
+---
+
+## 6. Drafting toward a profile
+
+1. Read the profile for the draft's language, the brief, any narrator or character notes, and nearby accepted text. Where the brief and an approved profile disagree on point of view or tense, ask the author.
+2. Write to the profile: its described voice and its ranges.
+3. Regular drafting writes one take. A final draft, and each unit of a restyle, gets three independent takes from the same reading, in separate fresh contexts where possible. Three takes cost about three drafts' tokens.
+4. Save takes outside the manuscript. Rank several with `rank`; check a single take with `check`.
+5. Read every take and choose one whole. Record why. Never splice takes.
+6. Check the chosen take before showing it, and again on its final text. A copy-guard hit blocks it. Drift that the scene's purpose explains is a question for the author, not a fix.
+7. Keep the unchosen takes and the ranking until the unit is accepted or sent back; then delete them. They are never evidence of the author's voice.
+
+---
+
+## 7. The restyle procedure
+
+A restyle rewrites chosen units of a book toward a profile, keeping everything but the voice. Keep every record outside the manuscript, in a run folder such as `restyle/run-1/`, with one folder per unit.
+
+1. **Decision note**, confirmed by the book's owner before any take: the approved profile with its three hashes; the units in scope, each with the SHA-256 of its accepted text; the threshold (`p90` unless named otherwise); the pilot or the rule that picks it; the preserve list and ending constraints; who accepts the pilot and the run. A change to any of these is a new note, and units assessed under the old note are stale.
+2. **Before table:**
+   ```bash
+   mdrestyler book my-book --profile my-book/voice --list units.txt --within p90 > restyle/run-1/before.md
+   mdrestyler book my-book --profile my-book/voice --list units.txt --within p90 --json > restyle/run-1/before.json
+   ```
+3. **Need assessment:** read every unit against the described voice and the narration measures, beyond-threshold units first. Record each as needs a restyle (naming the difference) or no restyle needed (with its distances, the reason and the SHA-256 read). Either result can fall anywhere on the table. Never reword locked text, such as quoted documents, to lower a distance. If no unit needs a restyle, the run ends with the assessment.
+4. **Pilot:** drawn from the units that need a restyle; if the named pilot needs none, the owner names another, recorded. Go on only after the pilot is accepted. A rejected pilot changes the profile or the decision note, never the preservation rules.
+5. **Each unit:** save the accepted text as `snapshot.md`; write three takes from the same reading; `rank` them (with one, `check` it); read every take against the snapshot and the profile and choose one whole take, writing why in `choice.md`; never splice takes; fix inside the take what steps 6 and 7 find; delete unchosen takes once the unit is accepted or sent back.
+6. **Preservation:** check the chosen take against the snapshot for events and their order; facts, numbers, dates, names and quoted documents; each dialogue line's speaker, act and meaning; in fiction, what each character knows and when and the order of reveals; in factual prose, every negation, attribution, qualification and cited claim; chapter and scene boundaries; the preserve list and ending constraints. A meaning change with unchanged numbers is a failure. Write the result to `lock-check.md`.
+7. **Bounded checks:** `mdrestyler check --profile my-book/voice chosen.md --accepted snapshot.md`, read on the narration distance and narration measures; a prose check on every rewritten sentence; a seam check at both joins. A guard that cannot run is **guard unavailable**, and that unit cannot be promoted.
+8. **Promotion:** read the candidate back, diff it against the snapshot, record the acceptance, and only then replace the accepted text.
+9. **Resume:** classify each unit in this order: unknown (evidence missing), stale (decision note changed, or a no-restyle unit's bytes differ from its assessed hash), done (current no-restyle assessment, bytes unchanged), promoted (text equals its accepted candidate), pending (current needs-restyle assessment, text equals its snapshot; only pending units continue to takes), conflict (anything else; report it and change nothing).
+10. **After table:** run the before commands again into `after.md` and `after.json` with the same `--within`. The tables locate change; the user's reading accepts it.
+
+---
+
+## 8. Worked example: cross-restyle
+
+`examples/cross-restyle` restyles a passage of *Adventures of Huckleberry Finn* (Mark Twain, 1884, Project Gutenberg #76) toward the voice of *The Turn of the Screw* (Henry James, 1898, Project Gutenberg #209) and back, following the procedure above. Both profiles are drafts scanned from their books as reference books. Three separate agents per direction wrote one take each.
+
+Narration distance from each profile (lower is closer; within and beyond against the 90th percentile of the profile's own chapters: Twain 1.18, James 1.17):
+
+| Text | Twain profile | James profile |
+|---|---|---|
+| Twain passage | 0.84 within | 1.63 beyond |
+| Twain passage restyled toward James | 1.20 beyond | 0.98 within |
+| James passage | 2.31 beyond | 1.17 within |
+| James passage restyled toward Twain | 1.11 within | 1.34 beyond |
+
+Each restyle crosses over. For the escape passage the reading chose the take the ranking put first; for the tower passage it chose the second, because the first-ranked take kept the source's long paragraphs. The tower passage restyled toward Twain has a narration distance of 1.11 but a pooled distance of 1.71, because the Twain book is a third dialogue and the passage has none.
+
+- README: https://github.com/sagol/mdrestyler/blob/main/examples/cross-restyle/README.md
+- Every take against both profiles: https://github.com/sagol/mdrestyler/blob/main/examples/cross-restyle/results/matrix.md
+- The same numbers as JSON: https://github.com/sagol/mdrestyler/blob/main/examples/cross-restyle/results/matrix.json
+
+```bash
+cd examples/cross-restyle
+python3 run.py            # regenerate the reports
+python3 run.py --check    # exit 1 if a committed report is stale
+```
+
+---
+
+## 9. Languages and limits
+
+- One profile per language. A scan refuses a book whose language tag is missing, names no single language, or is repeated with another.
+- English and Russian have language-specific word lists; other languages get only the language-neutral measures.
+- Russian dialogue is read by measure method 2: dash-led speech and its tags by the punctuation of direct speech. Speech in «ёлочки» is measured as narration. A profile from another method is compared on the other measures, with the changed ones reported as incomparable.
+- There is no word segmenter for Han, kana, Thai, Lao, Khmer or Myanmar. Text in those scripts is processed, but segmentation is reported as partial, and a guard with no hits says partial, not clear.
+- A scan reads at most 64 MiB of expanded EPUB text across its books (`--max-expanded-mb`). Fixed ceilings: 256 MiB per EPUB, 10,000 entries, 16 MiB per text entry, 4,000,000 words.
+- What an EPUB shows is judged from its stylesheets; rules the scan cannot settle are never applied, and the profile marks its styles partial.
+- The profile's files are identified by their bytes. Keep Git from converting their line endings (`voice/** -text` in `.gitattributes`).
+- On Python 3.10 and 3.11, a few full-precision values in `--json` output can differ in their last digit between runs. Python 3.12 and later give the same bytes every run, and so does `PYTHONHASHSEED=0` on older versions.
+- Script detection follows the running Python's Unicode data (Python 3.10 has Unicode 13).
+- The skill tests are static checks of the text: they say a rule is written, not that an agent follows it. Hosted CI may not run for the repository; local runs on Python 3.10 and 3.14 are the record.
+- In one test the takes lay within 0.09 of each other, and the take the measure put first was the one a blind reader put last.
+- A successful exit records a measurement. It does not establish quality, complete segmentation or originality, and the copy guard is not proof of originality.
+
+---
+
+## 10. Building on mdrestyler
+
+A tool that embeds mdrestyler can configure it once per process with `mdrestyler.names.configure(…)`: the names its messages use, who decides a delegated approval, how its books are laid out, and which earlier profile schemas and defaults it still reads. A second call with other settings is refused. Pin a release by its manifest digest (`mdrestyler --version`). A product built on mdrestyler may add its own records, locks and approvals; where it does, its rules apply on top of mdrestyler's.
+
+---
+
+## 11. Command help, verbatim
+
+The `--help` output of the checked-out commands. `rank` and `book` use the `check` parser with `--rank` or `--book BOOK` set.
+
+### mdrestyler --help
+
+```text
+usage: mdrestyler COMMAND [ARGS]
+
+commands:
+  scan      build an author profile from EPUB books or the author's own Markdown book
+  check     measure drafts against a profile and run the copy guard; exit 1 on a shared run (--accepted for a revision)
+  rank      order two or more takes of one unit by fit
+  book      check every unit of a book in reading order, one row each (--list names the units)
+  install   install a profile into a profile folder
+  profile   validate a profile folder: profile validate FOLDER --lang ru
+  verify    check this installation against its manifest (and --expect a manifest digest)
+
+Each command's --help says more. mdrestyler --version prints the version, source commit and manifest digest.
+```
+
+### mdrestyler scan --help
+
+```text
+usage: mdrestyler scan [-h] [--own EPUB] [--reference EPUB] [--own-book BOOK] [--eligibility FILE]
+                       --out OUT --work WORK [--min-words MIN_WORDS] [--replace]
+                       [--max-expanded-mb MAX_EXPANDED_MB]
+
+Build an author voice profile from one or more DRM-free EPUB books, one profile per language.
+
+For each language with enough text it writes, into --out:
+  author-profile.<lang>.json   measures, target ranges and the function-word fingerprint, with every source's hash
+  copy-guard.<lang>.json       winnowed hashes of the books' 8-word runs, short sections included, so a draft that
+                               repeats a book can be found
+  AUTHOR_PROFILE.<lang>.md     a draft profile: the measured targets filled in, the described voice left to write
+and, into --work (a folder outside the book), samples.<lang>.md: passages to read while writing the described voice.
+Delete the samples once the profile is written; a reference book's text never enters the book or the profile.
+
+Mark the author's own books with --own and books by other writers with --reference. An imported book is read from its
+Markdown units with --own-book BOOK --eligibility FILE: the file records the author's confirmation of which units and
+passages are their own original prose. Only those are measured and sampled; every unit, notes included, feeds the
+copy guard, and the source record keeps the source file's hash and each unit's. Only the author's own books
+may be quoted in the profile. --out and --work must lie outside any book (installing puts the result in one), and a
+profile already in --out is replaced only with --replace, which first moves its files to --out/history/<time>/.
+Exit status: 0 built; 1 refused (DRM, a size limit, an existing profile, a folder inside a book, a destination that is
+a symbolic link, the same book given twice) or no language had enough text; 2 on errors, such as a damaged archive, an
+input that is not a regular file or a language tag that names no language. Standard library only.
+
+options:
+  -h, --help            show this help message and exit
+  --own EPUB            a book by the author (may be quoted in the profile)
+  --reference EPUB      a book by another writer (measured and described, never quoted)
+  --own-book BOOK       the author's own Markdown book folder, read from its units (needs
+                        --eligibility)
+  --eligibility FILE    the author's confirmation of the book's original units and passages
+  --out OUT             folder for the profile files
+  --work WORK           folder outside the book for the sample passages
+  --min-words MIN_WORDS
+                        fewest words in a language to build its profile (default 3000)
+  --replace             replace a profile already in --out, moving its files to history/ first
+  --max-expanded-mb MAX_EXPANDED_MB
+                        expanded EPUB text the scan may read across all its books (default 64);
+                        fixed ceilings also limit each file, its entries and the words held
+```
+
+### mdrestyler check --help
+
+```text
+usage: mdrestyler check [-h] [--profile PROFILE] [--rank] [--book BOOK] [--list LIST]
+                        [--within WITHIN] [--lang LANG] [--json] [--strict] [--accepted ACCEPTED]
+                        [candidates ...]
+
+Measure a draft against an author profile and run the copy guard. Standard library only.
+
+  mdrestyler check --profile FOLDER candidate.md [more.md ...] [--lang ru] [--json] [--strict]
+  mdrestyler check --profile FOLDER revised.md --accepted base.md   (a revision of one accepted unit)
+  mdrestyler rank --profile FOLDER take1.md take2.md take3.md   (takes of one unit, ranked by fit)
+  mdrestyler book --profile FOLDER --list UNITS.txt BOOK [--within p90]   (every unit in reading order, one row each)
+
+The report names the candidate files and the SHA-256 of their bytes, the profile's revision (the prose profile, the
+measures and the copy guard, each with its SHA-256, the guard stated as absent when there is none), then:
+  - the profile's status: approved, draft or the shipped default, quoting an approval line that holds a number but
+    does not read as one date;
+  - copy guard: runs of 8 words the draft shares with a scanned book. Every shared run of 15 space-delimited words or more within supported extraction is found;
+    a shorter one is found only when the guard kept one of its hashes;
+  - each measured target: the draft's value, the profile's range, and within, near, outside or not measured, marked
+    weak when the draft is too short for that measure;
+  - the voice distance: the draft's mean robust distance from the profile's sources over the calibrated measures, and
+    the share of the sources' own chapters that lie farther from the rest (each measured without itself), when the
+    profile holds a calibration;
+  - narration (the author's words) and dialogue (the spoken words) apart, each against its own ranges, when the profile
+    holds them; --strict counts these comparisons too. Each register also gets its own voice distance, read against
+    that register's source chapters, when the profile calibrates it and the draft holds enough of the register. These
+    leave out the share of dialogue, which follows a unit's composition and length more than its voice, so it is a poor
+    aim for rewording.
+With --rank, each file is one take of the same unit, checked alone and ordered: takes with a copy-guard run last, then
+by narration distance, then by voice distance, then by the number of measures outside. The order informs a reading;
+it chooses nothing.
+With --book, each unit of the book's reading order (the files --list names, one per line, relative to the book) is
+checked alone against the profile, for a before and after table of a restyle or a whole-book look at drift. Its last
+column reads each unit's narration distance against a threshold, the narration calibration's 90th percentile unless
+--within names p50, max or a number: beyond means its narration lies farther from the profile than the sources' own
+chapters mostly do, so read it first; within means it lies nearer; by reading means the unit holds too little
+narration to measure or the profile has no narration calibration. The column sets an order of reading, not an
+outcome: a reading decides whether a unit needs a restyle. The JSON keeps the threshold's selector and exact value. A unit with no prose gets a row saying so; any other failure, such as an invalid
+profile, stops the table with exit 2.
+Without --lang, the language is the one profile in the folder whose recorded scripts (Latin, Cyrillic) include the
+draft's; when several profiles do, pass --lang.
+With --accepted, a revision of one accepted unit is checked against that unit's exact accepted base: a run the revision keeps unchanged, in place and unambiguous is the base's own text;
+base text it repeats more often than the base is a hit at every occurrence; moved or ambiguous base text is uncertain,
+never clear; inserted text and changed seams stay checked. The alignment is bounded (20,000 words, 10 seconds); past
+either bound nothing is exempt, duplicates and runs the base lacks stay hits and the rest is uncertain.
+Measures locate drift; a reading of the draft judges it.
+Exit status: 0 measured; 1 when the copy guard finds a run (or, with --strict, a measure is outside and not marked
+weak, or the profile was scanned by another measure method, so a target could not be compared); 2 on errors, including a profile or guard that is not valid.
+
+positional arguments:
+  candidates           Markdown draft files
+
+options:
+  -h, --help           show this help message and exit
+  --profile PROFILE    the profile folder, or an author-profile.<lang>.json file
+  --rank               check each file alone as a take of the same unit and order the takes by fit
+  --book BOOK          check every unit in the book's reading order alone, one row each
+  --list LIST          with --book: a file naming the units in reading order, one path per line,
+                       relative to the book
+  --within WITHIN      with --book: the narration distance a unit may lie within and need no
+                       restyle: p50, p90 (default) or max of the narration calibration, or a
+                       number
+  --lang LANG          profile language (default: from the draft's script)
+  --json               print the report as JSON
+  --strict             exit 1 when a measure is outside its range and not marked weak, or could
+                       not be compared with a profile scanned by another measure method
+  --accepted ACCEPTED  a revision's own accepted base: the unit's exact accepted text before the
+                       revision
+```
+
+### mdrestyler install --help
+
+```text
+usage: mdrestyler install [-h] --lang LANG [--replace] folder [source]
+
+Install an author profile into a profile folder: AUTHOR_PROFILE.<lang>.md, author-profile.<lang>.json and, when
+present, copy-guard.<lang>.json.
+
+  mdrestyler install FOLDER [SOURCE] --lang ru [--replace]
+
+SOURCE is a folder a scan wrote, or another profile folder; without it, the shipped default for the language. The
+shipped default, unedited, is replaced freely. Anything else already installed (a draft, an approved profile, an edited
+default or an incomplete profile) is replaced only with --replace, and then its files move to FOLDER/history/<time>/
+first, so the earlier profile is never lost. Standard library only.
+
+positional arguments:
+  folder       the profile folder to install into
+  source       profile folder (default: the shipped default for --lang)
+
+options:
+  -h, --help   show this help message and exit
+  --lang LANG  profile language, such as en or ru
+  --replace    replace an installed profile other than the unedited default, keeping its files
+               under history/
+```

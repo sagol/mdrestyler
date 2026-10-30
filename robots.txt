@@ -1,0 +1,14 @@
+# robots.txt for mdrestyler
+# Under the GitHub Pages project path (https://sagol.github.io/mdrestyler/), crawlers read
+# the host's policy at https://sagol.github.io/robots.txt. This file applies only when the
+# site is served from a domain root.
+#
+# Machine-readable resources:
+#   Summary index:  https://sagol.github.io/mdrestyler/llms.txt
+#   Full reference: https://sagol.github.io/mdrestyler/llms-full.txt
+#   Agent manifest: https://sagol.github.io/mdrestyler/agents.json
+
+User-agent: *
+Allow: /
+
+Sitemap: https://sagol.github.io/mdrestyler/sitemap.xml

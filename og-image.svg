@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="mdrestyler: measure prose against an author voice profile and restyle a Markdown book toward it">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111014"/>
+      <stop offset="100%" stop-color="#1b1922"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#24222b" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.6"/>
+  <rect x="64" y="56" width="1072" height="518" rx="20" fill="#16141b" stroke="#2f2c37" stroke-width="2"/>
+  <rect x="64" y="56" width="12" height="518" rx="6" fill="#b9a2ff"/>
+
+  <g transform="translate(116, 104)">
+    <g transform="scale(0.9)">
+      <rect width="64" height="64" rx="14" fill="#211f27" stroke="#b9a2ff" stroke-width="2"/>
+      <path d="M10 17h20M10 26h15M10 35h11" stroke="#f3f1f7" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="M23 51C27 35 37 20 54 9C52 25 43 39 28 47Z" fill="#b9a2ff"/>
+      <path d="M15 57L41 25" stroke="#211f27" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M15 57L23 47" stroke="#b9a2ff" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <text x="78" y="40" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="34" font-weight="700" fill="#f3f1f7">mdrestyler</text>
+    <rect x="306" y="13" width="90" height="32" rx="16" fill="#241f33" stroke="#b9a2ff" stroke-width="1.5"/>
+    <text x="351" y="34" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="600" fill="#cdbcff">v0.1.1</text>
+  </g>
+
+  <text x="116" y="238" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="50" font-weight="800" fill="#f3f1f7" letter-spacing="-1">Measure prose against an author's voice.</text>
+  <text x="116" y="300" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="50" font-weight="800" fill="#b9a2ff" letter-spacing="-1">Restyle a Markdown book toward it.</text>
+
+  <text x="116" y="354" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="24" fill="#c4c0cd">Voice profiles from EPUBs. Narration and dialogue apart. A copy guard.</text>
+  <text x="116" y="388" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="24" fill="#c4c0cd">The measures locate drift; a reading decides.</text>
+
+  <g transform="translate(116, 424)">
+    <rect width="968" height="104" rx="12" fill="#0b0a0e" stroke="#35323e" stroke-width="1.5"/>
+    <text x="28" y="42" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" fill="#8f8a9b">$</text>
+    <text x="52" y="42" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" fill="#f3f1f7">mdrestyler check --profile voice chapter-01.md</text>
+    <text x="28" y="78" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" fill="#8f8a9b">$</text>
+    <text x="52" y="78" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" fill="#f3f1f7">mdrestyler book my-book --profile voice --list units.txt</text>
+    <text x="720" y="42" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" fill="#6fd18a"># copy guard: clear</text>
+  </g>
+</svg>

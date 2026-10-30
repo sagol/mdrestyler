@@ -1,0 +1,22 @@
+{
+  "name": "mdrestyler: author voice profiles and restyling for Markdown books",
+  "short_name": "mdrestyler",
+  "description": "Measure prose against an author voice profile, guard against copying, and restyle a Markdown book toward it.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#111014",
+  "theme_color": "#b9a2ff",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png"
+    }
+  ]
+}
