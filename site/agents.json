@@ -1,0 +1,148 @@
+{
+  "schema_version": "1.0",
+  "name": "mdrestyler",
+  "version": "0.1.1",
+  "summary": "Measure prose against an author voice profile, guard against copying, and restyle a Markdown book toward it. The measures locate drift; a reading decides.",
+  "author": "Taras Baranyuk",
+  "author_url": "https://github.com/sagol",
+  "license": "MIT",
+  "homepage": "https://sagol.github.io/mdrestyler/",
+  "repository": "https://github.com/sagol/mdrestyler",
+  "pypi": "https://pypi.org/project/mdrestyler/",
+  "releases": "https://github.com/sagol/mdrestyler/releases",
+  "github_action": "sagol/mdrestyler@v0.1.1",
+  "runtime": {
+    "python": ">=3.10",
+    "dependencies": [],
+    "standard_library_only": true
+  },
+  "languages": {
+    "word_lists": ["en", "ru"],
+    "other": "language-neutral measures only; no word segmenter for Han, kana, Thai, Lao, Khmer or Myanmar"
+  },
+  "ai_resources": {
+    "llms_txt": "https://sagol.github.io/mdrestyler/llms.txt",
+    "llms_full_txt": "https://sagol.github.io/mdrestyler/llms-full.txt",
+    "skills": [
+      {
+        "name": "mdrestyler",
+        "purpose": "Build or install a voice profile, check a draft's voice or copying, choose between takes by reading, and restyle chapters or a book with the need-first procedure.",
+        "url": "https://raw.githubusercontent.com/sagol/mdrestyler/main/skills/mdrestyler/SKILL.md",
+        "folder": "skills/mdrestyler/",
+        "run_without_install": "python3 scripts/mdrestyler.py COMMAND",
+        "references": [
+          "https://raw.githubusercontent.com/sagol/mdrestyler/main/skills/mdrestyler/references/profile.md",
+          "https://raw.githubusercontent.com/sagol/mdrestyler/main/skills/mdrestyler/references/measures.md",
+          "https://raw.githubusercontent.com/sagol/mdrestyler/main/skills/mdrestyler/references/drafting.md",
+          "https://raw.githubusercontent.com/sagol/mdrestyler/main/skills/mdrestyler/references/restyle.md"
+        ]
+      }
+    ]
+  },
+  "install": {
+    "pypi": "pip install mdrestyler",
+    "release_wheel": "https://github.com/sagol/mdrestyler/releases",
+    "agent_skill": "Copy skills/mdrestyler/ into the agent's skills folder and run python3 scripts/mdrestyler.py from inside it; nothing needs installing.",
+    "github_actions": "- uses: sagol/mdrestyler@v0.1.1\n  with:\n    command: check\n    args: --profile voice chapters/01.md --strict"
+  },
+  "github_action_inputs": {
+    "command": {"default": "check", "description": "The mdrestyler command to run, such as check, rank, book, verify or profile."},
+    "args": {"default": "", "description": "The command's arguments as one string, split like a shell would."},
+    "working-directory": {"default": ".", "description": "The folder to run in; paths in args are relative to it."}
+  },
+  "cli_commands": {
+    "scan": {
+      "syntax": "mdrestyler scan [--own EPUB] [--reference EPUB] [--own-book BOOK] [--eligibility FILE] --out OUT --work WORK [--min-words N] [--replace] [--max-expanded-mb N]",
+      "description": "Build a voice profile, one per language with enough text, from DRM-free EPUBs (--own, --reference, each repeatable) or from the author's own Markdown book (--own-book with --eligibility). Writes the profile to --out and sample passages to --work.",
+      "inputs": ["EPUB files", "or a Markdown book folder and an eligibility JSON file"],
+      "outputs": ["author-profile.<lang>.json", "copy-guard.<lang>.json", "AUTHOR_PROFILE.<lang>.md", "samples.<lang>.md in --work", "JSON report on stdout with profiles and skipped"],
+      "exit_codes": {
+        "0": "Built.",
+        "1": "Refused (DRM, a size limit, an existing profile, a folder inside a book, a destination that is a symbolic link, the same book given twice) or no language had enough text.",
+        "2": "Error, such as a damaged archive, an input that is not a regular file or a language tag that names no language."
+      }
+    },
+    "check": {
+      "syntax": "mdrestyler check --profile FOLDER CANDIDATE.md [MORE.md ...] [--lang LANG] [--json] [--strict] [--accepted BASE]",
+      "description": "Measure drafts against a profile and run the copy guard. Reports the profile status, copy-guard runs, each measure against its range, the voice distance, and narration and dialogue apart. --accepted checks a revision of one unit against its exact accepted base.",
+      "inputs": ["Markdown drafts", "a profile folder or author-profile.<lang>.json"],
+      "outputs": ["text report", "JSON report with --json"],
+      "json_fields": ["language", "candidates", "words", "profile", "copy_guard", "copy_guard_hits", "copy_guard_uncertain", "accepted_base", "measures", "voice_distance", "calibration_quantiles", "registers", "register_calibrations"],
+      "exit_codes": {
+        "0": "Measured.",
+        "1": "The copy guard found a run, or with --strict a measure is outside its range and not marked weak, or could not be compared with a profile scanned by another measure method.",
+        "2": "Error, including a profile or guard that is not valid."
+      }
+    },
+    "rank": {
+      "syntax": "mdrestyler rank --profile FOLDER TAKE1.md TAKE2.md [TAKE3.md ...] [--lang LANG] [--json]",
+      "description": "Order two or more takes of one unit, each checked alone: takes with a copy-guard run last, then by narration distance, voice distance and the number of measures outside. The order informs a reading and chooses nothing.",
+      "exit_codes": {
+        "0": "Ranking printed; a ranking informs and does not gate.",
+        "2": "Error."
+      }
+    },
+    "book": {
+      "syntax": "mdrestyler book BOOK --profile FOLDER --list UNITS [--within p90] [--lang LANG] [--json]",
+      "description": "Check every unit a --list file names, in reading order, one row each, with a restyle reading of each unit's narration distance against a threshold (p50, p90 default, max, or a number): beyond, within or by reading. The column orders a reading; it decides nothing.",
+      "exit_codes": {
+        "0": "Table printed.",
+        "2": "The table stopped: a unit outside the book, missing, named twice or not Markdown, or an invalid profile."
+      }
+    },
+    "install": {
+      "syntax": "mdrestyler install FOLDER [SOURCE] --lang LANG [--replace]",
+      "description": "Install a profile into a profile folder. Without SOURCE, the shipped default for the language. A draft or approved profile already there is replaced only with --replace, and its files move to history/<time>/ first. Prints JSON with language, installed, status and kept.",
+      "exit_codes": {
+        "0": "Installed.",
+        "1": "Not installed, for example a profile already there and no --replace.",
+        "2": "Usage error."
+      }
+    },
+    "profile validate": {
+      "syntax": "mdrestyler profile validate FOLDER --lang LANG",
+      "description": "Report a profile folder's status (approved, draft or default) and revision as JSON, or why it is not valid.",
+      "exit_codes": {
+        "0": "Valid.",
+        "2": "Not valid, or --lang missing."
+      }
+    },
+    "verify": {
+      "syntax": "mdrestyler verify [--expect DIGEST]",
+      "description": "Check the skill folder the command runs from against MANIFEST.json, and the manifest digest with --expect. Prints JSON with root, manifest_sha256 and ok.",
+      "exit_codes": {
+        "0": "Matches.",
+        "1": "A file is missing, changed or unlisted, or the digest differs from --expect.",
+        "2": "Not run from a skill folder."
+      }
+    },
+    "--version": {
+      "syntax": "mdrestyler --version",
+      "description": "Print the version, the source commit and the manifest digest.",
+      "exit_codes": {
+        "0": "Printed."
+      }
+    }
+  },
+  "profile_files": {
+    "AUTHOR_PROFILE.<lang>.md": "The described voice and a table of the measured targets; status default, draft or approved.",
+    "author-profile.<lang>.json": "Measures, target ranges, function-word fingerprint, calibration, and narration and dialogue ranges, with each source's hash.",
+    "copy-guard.<lang>.json": "Winnowed hashes of the scanned books' 8-word runs, no text.",
+    "history/<time>/": "Earlier profiles, kept when one is replaced."
+  },
+  "schemas": ["mdrestyler-author-profile/1", "mdrestyler-copy-guard/1"],
+  "rules": [
+    "The measures locate drift; a reading decides. Never pick a take, accept a change or rewrite a sentence by the number alone.",
+    "Read the narration distance during a restyle; the pooled distance also weighs the share of dialogue.",
+    "Only the author's own books may be quoted in a profile. A reference book's text never enters a profile, a draft or a book.",
+    "Candidate text never changes a profile, and generated text is never evidence of the author's voice.",
+    "A copy-guard hit blocks a candidate. If the check cannot run, the candidate stays unfinished.",
+    "Write three takes per restyled unit, choose one whole take by reading, never splice takes, and promote only after recorded acceptance."
+  ],
+  "example": {
+    "name": "cross-restyle",
+    "description": "A passage of Adventures of Huckleberry Finn restyled toward The Turn of the Screw and back, with profiles, takes, choices and measures before and after.",
+    "readme": "https://github.com/sagol/mdrestyler/blob/main/examples/cross-restyle/README.md",
+    "results": "https://github.com/sagol/mdrestyler/blob/main/examples/cross-restyle/results/matrix.md"
+  }
+}

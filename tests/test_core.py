@@ -297,13 +297,13 @@ class CommandTests(Fresh):
         dest = self.copy_skill()
         init = dest / 'scripts/mdrestyler/__init__.py'
         real, stamp = init.read_bytes(), init.stat().st_mtime_ns
-        init.write_bytes(real.replace(b"'0.1.0'", b"'9.9.9'"))   # same size
+        init.write_bytes(real.replace(b"'0.1.1'", b"'9.9.9'"))   # same size
         os.utime(init, ns=(stamp, stamp))
         py_compile.compile(str(init), cfile=importlib.util.cache_from_source(str(init)), doraise=True)
         init.write_bytes(real)
         os.utime(init, ns=(stamp, stamp))   # the cache now looks current for the real source
         result = subprocess.run([sys.executable, str(dest / 'scripts/mdrestyler.py'), '--version'], capture_output=True, text=True)
-        self.assertIn('mdrestyler 0.1.0', result.stdout, result.stderr)
+        self.assertIn('mdrestyler 0.1.1', result.stdout, result.stderr)
 
     def test_the_skill_carries_its_source_receipt(self):
         build = json.loads((SCRIPTS / 'mdrestyler/_build.json').read_text())

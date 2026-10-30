@@ -1,7 +1,11 @@
 # Changelog
 
-## Unreleased
+## 0.1.1
 
+- A website at https://sagol.github.io/mdrestyler/, with `llms.txt`, `llms-full.txt` and `agents.json` for AI agents.
+- A GitHub Action: `uses: sagol/mdrestyler@v0.1.1` runs any command in a workflow.
+- `AGENTS.md` for agents that call the tool or change the repository.
+- Published on PyPI: `pip install mdrestyler`. The package metadata links the website, source, issues, changelog and example.
 - A worked example, `examples/cross-restyle`: two public-domain passages restyled into each other's voice, with the profiles, takes, choices and measures.
 
 ## 0.1.0
