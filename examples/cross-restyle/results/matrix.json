@@ -817,10 +817,10 @@
   "label": "twain-to-james take-2 (chosen)",
   "profiles": {
    "twain": {
-    "words": 1522,
-    "voice_distance": 1.2748,
-    "narration_distance": 1.2084,
-    "narration_closer_than": 0.075,
+    "words": 1519,
+    "voice_distance": 1.2623,
+    "narration_distance": 1.1985,
+    "narration_closer_than": 0.1,
     "narration_p90": 1.1848,
     "restyle": "beyond",
     "narration_outside": 3,
@@ -834,7 +834,7 @@
      },
      "sentence_len_mean": {
       "label": "mean sentence length, words",
-      "value": 25.2857,
+      "value": 25.2321,
       "low": 18.2161,
       "high": 26.0955,
       "status": "within"
@@ -862,14 +862,14 @@
      },
      "sentence_len_cv": {
       "label": "variation of sentence length (sd / mean)",
-      "value": 0.6211,
+      "value": 0.6241,
       "low": 0.6796,
       "high": 1.157,
       "status": "near"
      },
      "rhythm_shift": {
       "label": "length shift between consecutive sentences (/ mean)",
-      "value": 0.6975,
+      "value": 0.7033,
       "low": 0.6429,
       "high": 0.9785,
       "status": "within"
@@ -890,28 +890,28 @@
      },
      "comma_per_1000": {
       "label": "commas per 1000 words",
-      "value": 81.2147,
+      "value": 79.9717,
       "low": 54.9283,
       "high": 79.0492,
       "status": "near"
      },
      "semicolon_per_1000": {
       "label": "semicolons per 1000 words",
-      "value": 13.4181,
+      "value": 13.4466,
       "low": 10.2426,
       "high": 19.5301,
       "status": "within (weak: short text)"
      },
      "colon_per_1000": {
       "label": "colons per 1000 words",
-      "value": 2.8249,
+      "value": 2.8309,
       "low": 1.5627,
       "high": 9.5568,
       "status": "within (weak: short text)"
      },
      "dash_per_1000": {
       "label": "dashes in the prose per 1000 words",
-      "value": 6.3559,
+      "value": 6.3694,
       "low": 1.1516,
       "high": 7.9943,
       "status": "within (weak: short text)"
@@ -946,28 +946,28 @@
      },
      "simile_per_1000": {
       "label": "simile markers per 1000 words",
-      "value": 2.1186,
+      "value": 2.1231,
       "low": 0.0,
       "high": 2.2065,
       "status": "within (weak: short text)"
      },
      "word_len_mean": {
       "label": "mean word length, letters",
-      "value": 3.7938,
+      "value": 3.7933,
       "low": 3.6251,
       "high": 4.0952,
       "status": "within"
      },
      "mattr": {
       "label": "vocabulary variety (MATTR, 500-word window)",
-      "value": 0.4649,
+      "value": 0.4648,
       "low": 0.4081,
       "high": 0.4745,
       "status": "within"
      },
      "adverb_ly_per_1000": {
       "label": "-ly adverbs per 1000 words",
-      "value": 8.4746,
+      "value": 8.4926,
       "low": 0.0,
       "high": 4.7601,
       "status": "outside (weak: short text)"
@@ -995,14 +995,14 @@
      },
      "first_person_per_1000": {
       "label": "first-person pronouns in narration per 1000 words",
-      "value": 76.2712,
+      "value": 75.7254,
       "low": 32.588,
       "high": 80.7361,
       "status": "within"
      },
      "third_person_per_1000": {
       "label": "third-person pronouns in narration per 1000 words",
-      "value": 49.435,
+      "value": 49.54,
       "low": 61.3299,
       "high": 98.4019,
       "status": "outside"
@@ -1018,9 +1018,9 @@
     "copy_guard_runs": 66
    },
    "james": {
-    "words": 1522,
-    "voice_distance": 1.0346,
-    "narration_distance": 0.9754,
+    "words": 1519,
+    "voice_distance": 1.0386,
+    "narration_distance": 0.9843,
     "narration_closer_than": 0.5455,
     "narration_p90": 1.1745,
     "restyle": "within",
@@ -1035,7 +1035,7 @@
      },
      "sentence_len_mean": {
       "label": "mean sentence length, words",
-      "value": 25.2857,
+      "value": 25.2321,
       "low": 17.3141,
       "high": 30.7574,
       "status": "within"
@@ -1063,14 +1063,14 @@
      },
      "sentence_len_cv": {
       "label": "variation of sentence length (sd / mean)",
-      "value": 0.6211,
+      "value": 0.6241,
       "low": 0.4836,
       "high": 0.8346,
       "status": "within"
      },
      "rhythm_shift": {
       "label": "length shift between consecutive sentences (/ mean)",
-      "value": 0.6975,
+      "value": 0.7033,
       "low": 0.4734,
       "high": 0.7714,
       "status": "within"
@@ -1091,28 +1091,28 @@
      },
      "comma_per_1000": {
       "label": "commas per 1000 words",
-      "value": 81.2147,
+      "value": 79.9717,
       "low": 72.8498,
       "high": 98.4137,
       "status": "within"
      },
      "semicolon_per_1000": {
       "label": "semicolons per 1000 words",
-      "value": 13.4181,
+      "value": 13.4466,
       "low": 4.9909,
       "high": 10.1567,
       "status": "outside (weak: short text)"
      },
      "colon_per_1000": {
       "label": "colons per 1000 words",
-      "value": 2.8249,
+      "value": 2.8309,
       "low": 0.7333,
       "high": 3.8778,
       "status": "within (weak: short text)"
      },
      "dash_per_1000": {
       "label": "dashes in the prose per 1000 words",
-      "value": 6.3559,
+      "value": 6.3694,
       "low": 5.0038,
       "high": 15.6084,
       "status": "within (weak: short text)"
@@ -1147,28 +1147,28 @@
      },
      "simile_per_1000": {
       "label": "simile markers per 1000 words",
-      "value": 2.1186,
+      "value": 2.1231,
       "low": 0.4559,
       "high": 4.6384,
       "status": "within (weak: short text)"
      },
      "word_len_mean": {
       "label": "mean word length, letters",
-      "value": 3.7938,
+      "value": 3.7933,
       "low": 3.9141,
       "high": 4.3669,
       "status": "outside"
      },
      "mattr": {
       "label": "vocabulary variety (MATTR, 500-word window)",
-      "value": 0.4649,
+      "value": 0.4648,
       "low": 0.4594,
       "high": 0.5274,
       "status": "within"
      },
      "adverb_ly_per_1000": {
       "label": "-ly adverbs per 1000 words",
-      "value": 8.4746,
+      "value": 8.4926,
       "low": 12.2305,
       "high": 22.5286,
       "status": "outside (weak: short text)"
@@ -1196,14 +1196,14 @@
      },
      "first_person_per_1000": {
       "label": "first-person pronouns in narration per 1000 words",
-      "value": 76.2712,
+      "value": 75.7254,
       "low": 71.429,
       "high": 95.138,
       "status": "within"
      },
      "third_person_per_1000": {
       "label": "third-person pronouns in narration per 1000 words",
-      "value": 49.435,
+      "value": 49.54,
       "low": 44.7329,
       "high": 87.8751,
       "status": "within"
@@ -2038,13 +2038,13 @@
   "label": "james-to-twain take-1 (chosen)",
   "profiles": {
    "twain": {
-    "words": 1469,
-    "voice_distance": 1.7099,
-    "narration_distance": 1.1165,
-    "narration_closer_than": 0.175,
+    "words": 1471,
+    "voice_distance": 1.7125,
+    "narration_distance": 1.115,
+    "narration_closer_than": 0.2,
     "narration_p90": 1.1848,
     "restyle": "within",
-    "narration_outside": 7,
+    "narration_outside": 8,
     "narration_measures": {
      "sentence_len_median": {
       "label": "median sentence length, words",
@@ -2055,7 +2055,7 @@
      },
      "sentence_len_mean": {
       "label": "mean sentence length, words",
-      "value": 25.7719,
+      "value": 25.807,
       "low": 18.2161,
       "high": 26.0955,
       "status": "within"
@@ -2083,14 +2083,14 @@
      },
      "sentence_len_cv": {
       "label": "variation of sentence length (sd / mean)",
-      "value": 0.455,
+      "value": 0.4539,
       "low": 0.6796,
       "high": 1.157,
       "status": "outside"
      },
      "rhythm_shift": {
       "label": "length shift between consecutive sentences (/ mean)",
-      "value": 0.5231,
+      "value": 0.521,
       "low": 0.6429,
       "high": 0.9785,
       "status": "outside"
@@ -2111,17 +2111,17 @@
      },
      "comma_per_1000": {
       "label": "commas per 1000 words",
-      "value": 80.3268,
+      "value": 80.2175,
       "low": 54.9283,
       "high": 79.0492,
       "status": "near"
      },
      "semicolon_per_1000": {
       "label": "semicolons per 1000 words",
-      "value": 8.8496,
+      "value": 8.8375,
       "low": 10.2426,
       "high": 19.5301,
-      "status": "near (weak: short text)"
+      "status": "outside (weak: short text)"
      },
      "colon_per_1000": {
       "label": "colons per 1000 words",
@@ -2132,7 +2132,7 @@
      },
      "dash_per_1000": {
       "label": "dashes in the prose per 1000 words",
-      "value": 6.8074,
+      "value": 6.7981,
       "low": 1.1516,
       "high": 7.9943,
       "status": "within (weak: short text)"
@@ -2146,14 +2146,14 @@
      },
      "exclamation_per_1000": {
       "label": "exclamation marks per 1000 words",
-      "value": 1.3615,
+      "value": 1.3596,
       "low": 0.0,
       "high": 2.8089,
       "status": "within (weak: short text)"
      },
      "question_per_1000": {
       "label": "question marks per 1000 words",
-      "value": 0.6807,
+      "value": 0.6798,
       "low": 0.0,
       "high": 2.224,
       "status": "within (weak: short text)"
@@ -2174,21 +2174,21 @@
      },
      "word_len_mean": {
       "label": "mean word length, letters",
-      "value": 3.7903,
+      "value": 3.7872,
       "low": 3.6251,
       "high": 4.0952,
       "status": "within"
      },
      "mattr": {
       "label": "vocabulary variety (MATTR, 500-word window)",
-      "value": 0.4455,
+      "value": 0.4447,
       "low": 0.4081,
       "high": 0.4745,
       "status": "within"
      },
      "adverb_ly_per_1000": {
       "label": "-ly adverbs per 1000 words",
-      "value": 2.0422,
+      "value": 2.0394,
       "low": 0.0,
       "high": 4.7601,
       "status": "within (weak: short text)"
@@ -2216,21 +2216,21 @@
      },
      "first_person_per_1000": {
       "label": "first-person pronouns in narration per 1000 words",
-      "value": 75.5616,
+      "value": 75.4589,
       "low": 32.588,
       "high": 80.7361,
       "status": "within"
      },
      "third_person_per_1000": {
       "label": "third-person pronouns in narration per 1000 words",
-      "value": 65.3506,
+      "value": 65.9415,
       "low": 61.3299,
       "high": 98.4019,
       "status": "within"
      },
      "past_tense_share": {
       "label": "past-tense share of tense markers in narration",
-      "value": 0.9636,
+      "value": 0.9639,
       "low": 0.7587,
       "high": 1.0,
       "status": "within"
@@ -2239,9 +2239,9 @@
     "copy_guard_runs": 0
    },
    "james": {
-    "words": 1469,
-    "voice_distance": 1.7185,
-    "narration_distance": 1.3306,
+    "words": 1471,
+    "voice_distance": 1.7229,
+    "narration_distance": 1.3363,
     "narration_closer_than": 0.0455,
     "narration_p90": 1.1745,
     "restyle": "beyond",
@@ -2256,7 +2256,7 @@
      },
      "sentence_len_mean": {
       "label": "mean sentence length, words",
-      "value": 25.7719,
+      "value": 25.807,
       "low": 17.3141,
       "high": 30.7574,
       "status": "within"
@@ -2284,14 +2284,14 @@
      },
      "sentence_len_cv": {
       "label": "variation of sentence length (sd / mean)",
-      "value": 0.455,
+      "value": 0.4539,
       "low": 0.4836,
       "high": 0.8346,
       "status": "near"
      },
      "rhythm_shift": {
       "label": "length shift between consecutive sentences (/ mean)",
-      "value": 0.5231,
+      "value": 0.521,
       "low": 0.4734,
       "high": 0.7714,
       "status": "within"
@@ -2312,14 +2312,14 @@
      },
      "comma_per_1000": {
       "label": "commas per 1000 words",
-      "value": 80.3268,
+      "value": 80.2175,
       "low": 72.8498,
       "high": 98.4137,
       "status": "within"
      },
      "semicolon_per_1000": {
       "label": "semicolons per 1000 words",
-      "value": 8.8496,
+      "value": 8.8375,
       "low": 4.9909,
       "high": 10.1567,
       "status": "within (weak: short text)"
@@ -2333,7 +2333,7 @@
      },
      "dash_per_1000": {
       "label": "dashes in the prose per 1000 words",
-      "value": 6.8074,
+      "value": 6.7981,
       "low": 5.0038,
       "high": 15.6084,
       "status": "within (weak: short text)"
@@ -2347,14 +2347,14 @@
      },
      "exclamation_per_1000": {
       "label": "exclamation marks per 1000 words",
-      "value": 1.3615,
+      "value": 1.3596,
       "low": 0.0,
       "high": 2.8978,
       "status": "within (weak: short text)"
      },
      "question_per_1000": {
       "label": "question marks per 1000 words",
-      "value": 0.6807,
+      "value": 0.6798,
       "low": 0.0,
       "high": 3.4283,
       "status": "within (weak: short text)"
@@ -2375,21 +2375,21 @@
      },
      "word_len_mean": {
       "label": "mean word length, letters",
-      "value": 3.7903,
+      "value": 3.7872,
       "low": 3.9141,
       "high": 4.3669,
       "status": "outside"
      },
      "mattr": {
       "label": "vocabulary variety (MATTR, 500-word window)",
-      "value": 0.4455,
+      "value": 0.4447,
       "low": 0.4594,
       "high": 0.5274,
       "status": "outside"
      },
      "adverb_ly_per_1000": {
       "label": "-ly adverbs per 1000 words",
-      "value": 2.0422,
+      "value": 2.0394,
       "low": 12.2305,
       "high": 22.5286,
       "status": "outside (weak: short text)"
@@ -2417,21 +2417,21 @@
      },
      "first_person_per_1000": {
       "label": "first-person pronouns in narration per 1000 words",
-      "value": 75.5616,
+      "value": 75.4589,
       "low": 71.429,
       "high": 95.138,
       "status": "within"
      },
      "third_person_per_1000": {
       "label": "third-person pronouns in narration per 1000 words",
-      "value": 65.3506,
+      "value": 65.9415,
       "low": 44.7329,
       "high": 87.8751,
       "status": "within"
      },
      "past_tense_share": {
       "label": "past-tense share of tense markers in narration",
-      "value": 0.9636,
+      "value": 0.9639,
       "low": 0.9004,
       "high": 1.0,
       "status": "within"

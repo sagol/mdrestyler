@@ -4,7 +4,7 @@ Profile P1 (en): profiles/twain/author-profile.en.json (sha256 29e6c3b936f2a1a85
 
 | File | Profile | Words | Voice distance | Closer than (its source chapters) | Narration distance | Narration closer than | Dialogue distance | Measures outside | Copy-guard runs | Restyle |
 |---|---|---|---|---|---|---|---|---|---|---|
-| restyle/james-to-twain/take-1.md | P1 | 1469 | 1.71 | 0% (beyond every source chapter) | 1.12 | 18% | n/a | 16 | 0 | within p90 1.18 (narration 1.12) |
+| restyle/james-to-twain/take-1.md | P1 | 1471 | 1.71 | 0% (beyond every source chapter) | 1.11 | 20% | n/a | 16 | 0 | within p90 1.18 (narration 1.11) |
 
 The voice distance pools narration and dialogue, so it also weighs how much of a unit is dialogue, which depends on the unit's composition and length; the narration and dialogue distances leave that out and show best what rewording can move.
 Restyle reads each unit's narration distance against the narration calibration's p90, per profile above: beyond means its narration lies farther from the profile than the sources' own chapters mostly do, so read it first; within means it lies nearer; by reading means the unit holds too little narration to measure, or the profile has no narration calibration. It orders the reading; a reading decides whether a unit needs a restyle, wherever it falls.

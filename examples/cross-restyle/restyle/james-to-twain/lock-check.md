@@ -1,6 +1,6 @@
 # Preservation: take 1 against the snapshot
 
-Read side by side, after the two fixes in `choice.md`.
+Read side by side, after the fixes in `choice.md`.
 
 | Check | Result |
 |---|---|
@@ -8,7 +8,7 @@ Read side by side, after the two fixes in `choice.md`.
 | Facts, numbers, names | Kept at every occurrence: the first weeks, a long June day, little Flora and the first morning, Harley Street, the pair of towers called new and old, a dozen possibilities, after exactly a minute, both hands on the ledge, no hat. Crenelated becomes notched battlements. |
 | Dialogue | None in the passage. |
 | What she knows and when | Kept: she first takes the figure for the person she had imagined, then sees it is a stranger; she never learns who he is in the passage. |
-| Negations and qualifications | Kept, in the voice's words: probably (I reckon), doubtless and perhaps (no doubt, maybe), not in the least shrinking, if he ever thought of it, unless the change was in her sight, none of the possibilities better that she could see. |
+| Negations and qualifications | Kept, in the voice's words: probably (I reckon), doubtless and perhaps (no doubt, maybe), not in the least shrinking, if he ever thought of it, unless indeed there was a change she saw with a stranger sharpness (restored in review), none of the possibilities better that she could see. |
 | Boundaries | Same start and the same last sentence. Four paragraphs become nineteen; paragraphing is voice. |
 | Preserve list | Kept. |
 

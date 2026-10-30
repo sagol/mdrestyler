@@ -1,6 +1,6 @@
 "Get up! What are you about?"
 
-I opened my eyes and looked about me, trying, with such wits as I could gather, to make out where I was. It was after sunrise, and I had been, I must suppose, very soundly asleep. Pap was standing over me, looking sour, and looking, as I could not fail to observe, sick as well. He said:
+I opened my eyes and looked about me, trying, with such wits as I could gather, to make out where I was. It was after sunrise, and I had been very soundly asleep. Pap was standing over me, looking sour, and looking, as I could not fail to observe, sick as well. He said:
 
 "What are you doing with this gun?"
 

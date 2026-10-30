@@ -25,24 +25,24 @@ Narration distance from each profile. Lower is closer; *within* and *beyond* rea
 | Text | Twain profile | James profile |
 |---|---|---|
 | Twain passage | **0.84** within | 1.63 beyond |
-| Twain passage restyled toward James | 1.21 beyond | **0.98** within |
+| Twain passage restyled toward James | 1.20 beyond | **0.98** within |
 | James passage | 2.31 beyond | **1.17** within |
-| James passage restyled toward Twain | **1.12** within | 1.33 beyond |
+| James passage restyled toward Twain | **1.11** within | 1.34 beyond |
 
 Each restyle crosses over: the text moves inside the target's range and out of its source's. The escape passage, restyled, lies nearer the James profile than 55% of the James book's own chapters.
 
 What moved, in the narration:
 
-- Toward James: commas per 1,000 words rose from 49 to 81, into the target range; -ly adverbs from 1.5 to 8.5, still below the target's 12 to 23; long sentences from 20% to 32%; the past-tense share from 0.91 to 0.99. Mean word length barely moved (3.75 to 3.79) because the events themselves are told in plain words, and a restyle may not add new matter to say in longer ones.
-- Toward Twain: -ly adverbs fell from 11.6 to 2.0 per 1,000 words, dashes from 17 to 7, vocabulary variety from 0.49 to 0.45 and the median paragraph from 338 words to 87, all into or near the target ranges. Sentences stayed more evenly long than the target's (variation 0.46 against 0.68 to 1.16): the governess's qualifications had to stay, and they keep the sentences long.
+- Toward James: commas per 1,000 words rose from 49 to 80, into the target range; -ly adverbs from 1.5 to 8.5, still below the target's 12 to 23; long sentences from 20% to 32%; the past-tense share from 0.91 to 0.99. Mean word length barely moved (3.75 to 3.79) because the events themselves are told in plain words, and a restyle may not add new matter to say in longer ones.
+- Toward Twain: -ly adverbs fell from 11.6 to 2.0 per 1,000 words, dashes from 17 to 7, vocabulary variety from 0.49 to 0.45 and the median paragraph from 338 words to 87, all into or near the target ranges. Sentences stayed more evenly long than the target's (variation 0.45 against 0.68 to 1.16): the governess's qualifications had to stay, and they keep the sentences long.
 
 [results/matrix.md](results/matrix.md) has every take against both profiles and every narration measure before and after; [results/matrix.json](results/matrix.json) has the same numbers.
 
 ## What the example shows about the tool
 
-- **Read the narration distance.** The tower passage restyled toward Twain has a narration distance of 1.12 from the Twain profile but a pooled distance of 1.71. The pooled distance also weighs the share of dialogue, and the Twain book is a third dialogue while the passage has none. Rewording cannot change that, so the narration distance is the one to aim at.
-- **The ranking is a lead; the reading chooses.** For the escape passage the reading chose the take the ranking put first. For the tower passage it chose the second: the first-ranked take kept the source's 300-word paragraphs, so the vernacular sat inside the governess's paragraph shape. [choice.md](restyle/james-to-twain/choice.md) gives the reasons.
-- **Preservation limits the voice.** No take could give the escape passage the governess's interiority, and none could strip the tower passage of its qualifications, because a restyle may not add or drop meaning. The reading also caught small additions of attitude in the chosen takes ("oddly enough", "and you could tell it"), which were removed. [lock-check.md](restyle/twain-to-james/lock-check.md) records each check.
+- **Read the narration distance.** The tower passage restyled toward Twain has a narration distance of 1.11 from the Twain profile but a pooled distance of 1.71. The pooled distance also weighs the share of dialogue, and the Twain book is a third dialogue while the passage has none. Rewording cannot change that, so the narration distance is the one to aim at.
+- **The ranking is a lead; the reading chooses.** For the escape passage the reading chose the take the ranking put first. For the tower passage it chose the second: the first-ranked take kept the source's long paragraphs, so the vernacular sat inside the governess's paragraph shape. [choice.md](restyle/james-to-twain/choice.md) gives the reasons.
+- **Preservation limits the voice.** No take could give the escape passage the governess's interiority, and none could strip the tower passage of its qualifications, because a restyle may not add or drop meaning. The reading also caught small additions of attitude in the chosen takes ("oddly enough", "and you could tell it"), which were removed; review then caught two sentences where the certainty changed, a stated fact turned into a guess and an open alternative settled, and those were restored. [lock-check.md](restyle/twain-to-james/lock-check.md) records each check.
 - **The copy guard sees the source.** Against its own book's guard, each source passage shares hundreds of 8-word runs, as it should. The chosen takes still share 66 and 4 runs with their source books, mostly lists and short phrases a restyle keeps, such as the supplies Huck loads into the canoe. In a real restyle the check runs with `--accepted snapshot.md`, which counts unchanged base text as the book's own. Against the target's guard, every take is clear.
 
 ## Layout

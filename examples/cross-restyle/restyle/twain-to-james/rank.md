@@ -4,7 +4,7 @@ Profile P1 (en): profiles/james/author-profile.en.json (sha256 bf573a0282fc58da5
 
 | File | Profile | Words | Voice distance | Closer than (its source chapters) | Narration distance | Narration closer than | Dialogue distance | Measures outside | Copy-guard runs |
 |---|---|---|---|---|---|---|---|---|---|
-| restyle/twain-to-james/take-2.md | P1 | 1522 | 1.03 | 36% | 0.98 | 55% | n/a | 6 | 0 |
+| restyle/twain-to-james/take-2.md | P1 | 1519 | 1.04 | 36% | 0.98 | 55% | n/a | 6 | 0 |
 | restyle/twain-to-james/take-3.md | P1 | 1552 | 1.08 | 32% | 1.04 | 41% | n/a | 6 | 0 |
 | restyle/twain-to-james/take-1.md | P1 | 1545 | 1.29 | 23% | 1.21 | 9% | n/a | 8 | 0 |
 
