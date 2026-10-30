@@ -4,18 +4,24 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mdrestyler"
-version = "0.1.0"   # equal to mdrestyler.__version__; tests/test_core.py checks it
-description = "Measure prose against an author voice profile, guard against copying, and restyle a Markdown book toward it."
+version = "0.1.1"   # equal to mdrestyler.__version__; tests/test_core.py checks it
+description = "Stylometry for writers and AI agents: measure prose against an author voice profile, guard against copying, and restyle a Markdown book toward a voice."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 requires-python = ">=3.10"
 authors = [{ name = "Taras Baranyuk" }]
-keywords = ["stylometry", "voice", "style", "markdown", "epub", "fiction", "writing", "copy guard"]
+keywords = ["stylometry", "author voice", "writing style", "style transfer", "restyle", "voice profile", "markdown", "epub",
+            "fiction", "writing", "editing", "copy guard", "plagiarism check", "ai agent skill", "llm", "claude code", "codex",
+            "github action", "russian"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Environment :: Console",
+  "Intended Audience :: Developers",
   "Intended Audience :: End Users/Desktop",
+  "Intended Audience :: Science/Research",
+  "Natural Language :: English",
+  "Natural Language :: Russian",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
@@ -30,7 +36,12 @@ dependencies = []
 mdrestyler = "mdrestyler.cli:main_exit"
 
 [project.urls]
-Homepage = "https://github.com/sagol/mdrestyler"
+Homepage = "https://sagol.github.io/mdrestyler/"
+Documentation = "https://sagol.github.io/mdrestyler/"
+Source = "https://github.com/sagol/mdrestyler"
+Issues = "https://github.com/sagol/mdrestyler/issues"
+Changelog = "https://github.com/sagol/mdrestyler/blob/main/CHANGELOG.md"
+Example = "https://github.com/sagol/mdrestyler/tree/main/examples/cross-restyle"
 
 [tool.setuptools]
 package-dir = { "" = "skills/mdrestyler/scripts" }

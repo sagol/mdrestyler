@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#111014">
+
+  <title>mdrestyler: author voice profiles and restyling for Markdown books</title>
+  <meta name="description" content="Python CLI and agent skill: build an author voice profile from EPUBs, measure voice distance with narration and dialogue apart, guard against copying, rank takes and restyle a Markdown book.">
+  <meta name="keywords" content="mdrestyler, stylometry, author voice profile, voice distance, restyle markdown book, copy guard, narration and dialogue, writing style analysis, epub stylometry, agent skill, python cli">
+  <meta name="author" content="Taras Baranyuk">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+  <link rel="canonical" href="https://sagol.github.io/mdrestyler/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="site.webmanifest">
+
+  <!-- Machine-readable resources for AI agents and LLM crawlers -->
+  <link rel="alternate" type="text/plain" href="llms.txt" title="LLM summary index (llms.txt)">
+  <link rel="alternate" type="text/plain" href="llms-full.txt" title="LLM full reference (llms-full.txt)">
+  <link rel="alternate" type="application/json" href="agents.json" title="Agent capability manifest (agents.json)">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="mdrestyler">
+  <meta property="og:title" content="mdrestyler: author voice profiles and restyling for Markdown books">
+  <meta property="og:description" content="Build a voice profile from EPUBs, measure a draft's voice distance with narration and dialogue apart, guard against copying, rank takes and restyle a Markdown book. The measures locate drift; a reading decides.">
+  <meta property="og:url" content="https://sagol.github.io/mdrestyler/">
+  <meta property="og:image" content="https://sagol.github.io/mdrestyler/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="mdrestyler: measure prose against an author voice profile and restyle a Markdown book toward it">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter / X card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="mdrestyler: author voice profiles and restyling for Markdown books">
+  <meta name="twitter:description" content="Build a voice profile from EPUBs, measure a draft's voice distance with narration and dialogue apart, guard against copying, rank takes and restyle a Markdown book.">
+  <meta name="twitter:image" content="https://sagol.github.io/mdrestyler/og-image.png">
+  <meta name="twitter:image:alt" content="mdrestyler: measure prose against an author voice profile and restyle a Markdown book toward it">
+
+  <link rel="stylesheet" href="styles.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://sagol.github.io/mdrestyler/#website",
+        "url": "https://sagol.github.io/mdrestyler/",
+        "name": "mdrestyler",
+        "description": "Measure prose against an author voice profile, guard against copying, and restyle a Markdown book toward it.",
+        "inLanguage": "en-US",
+        "publisher": {"@id": "https://sagol.github.io/mdrestyler/#author"}
+      },
+      {
+        "@type": "Person",
+        "@id": "https://sagol.github.io/mdrestyler/#author",
+        "name": "Taras Baranyuk",
+        "url": "https://github.com/sagol"
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://sagol.github.io/mdrestyler/#software",
+        "name": "mdrestyler",
+        "description": "A command-line tool and agent skill that builds an author voice profile from DRM-free EPUBs or the author's own Markdown book, checks drafts against it, guards against copying, ranks takes of one unit, tables a whole book and supports a need-first restyle.",
+        "applicationCategory": "DeveloperApplication",
+        "applicationSubCategory": "Stylometry and writing tools",
+        "operatingSystem": "Any system with Python 3.10 or later",
+        "softwareRequirements": "Python 3.10 or later; standard library only",
+        "softwareVersion": "0.1.1",
+        "license": "https://opensource.org/licenses/MIT",
+        "url": "https://sagol.github.io/mdrestyler/",
+        "downloadUrl": "https://pypi.org/project/mdrestyler/",
+        "installUrl": "https://pypi.org/project/mdrestyler/",
+        "releaseNotes": "https://github.com/sagol/mdrestyler/blob/main/CHANGELOG.md",
+        "author": {"@id": "https://sagol.github.io/mdrestyler/#author"},
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Builds one voice profile per language from DRM-free EPUBs (own and reference books) or from the author's own Markdown book with an eligibility file",
+          "Checks a draft against the profile: each measure against its range, the voice distance, and narration and dialogue measured apart",
+          "Copy guard: finds any passage of fifteen words or more that a draft shares with a scanned book; a hit exits 1",
+          "Checks a revision of one unit against its accepted base with --accepted",
+          "Ranks two or more takes of one unit without choosing one",
+          "Tables a whole book unit by unit with a restyle reading against a threshold such as p90",
+          "Installs profiles with history and validates a profile folder",
+          "Ships an agent skill (SKILL.md) with a need-first restyle procedure",
+          "Runs in GitHub Actions with sagol/mdrestyler@v0.1.1",
+          "English and Russian word lists; language-neutral measures for other languages"
+        ]
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "@id": "https://sagol.github.io/mdrestyler/#source",
+        "name": "mdrestyler",
+        "codeRepository": "https://github.com/sagol/mdrestyler",
+        "programmingLanguage": "Python",
+        "runtimePlatform": "Python 3.10+",
+        "version": "0.1.1",
+        "license": "https://opensource.org/licenses/MIT",
+        "author": {"@id": "https://sagol.github.io/mdrestyler/#author"},
+        "targetProduct": {"@id": "https://sagol.github.io/mdrestyler/#software"}
+      },
+      {
+        "@type": "HowTo",
+        "@id": "https://sagol.github.io/mdrestyler/#howto",
+        "name": "How to build a voice profile, check a draft and restyle a Markdown book with mdrestyler",
+        "description": "Install mdrestyler, scan EPUBs into a voice profile, check drafts against it, and restyle only the units that need it, choosing each take by reading.",
+        "tool": [{"@type": "HowToTool", "name": "Python 3.10 or later"}],
+        "step": [
+          {
+            "@type": "HowToStep",
+            "position": 1,
+            "name": "Install mdrestyler",
+            "text": "Run pip install mdrestyler, or copy the skills/mdrestyler/ folder into your agent's skills folder and run python3 scripts/mdrestyler.py from inside it with nothing installed.",
+            "url": "https://sagol.github.io/mdrestyler/#install"
+          },
+          {
+            "@type": "HowToStep",
+            "position": 2,
+            "name": "Build and install a voice profile",
+            "text": "Scan DRM-free EPUBs with mdrestyler scan --own mine.epub --reference theirs.epub --out profile --work work, write the described voice, have the author approve it, then run mdrestyler install my-book/voice profile --lang en.",
+            "url": "https://sagol.github.io/mdrestyler/#profiles"
+          },
+          {
+            "@type": "HowToStep",
+            "position": 3,
+            "name": "Check a draft",
+            "text": "Run mdrestyler check --profile my-book/voice chapter-01.md. Read the copy guard, the measures against their ranges, and the narration distance. A copy-guard hit exits 1.",
+            "url": "https://sagol.github.io/mdrestyler/#measures"
+          },
+          {
+            "@type": "HowToStep",
+            "position": 4,
+            "name": "Restyle the units that need it",
+            "text": "Table the book with mdrestyler book my-book --profile my-book/voice --list units.txt --within p90, assess every unit by reading, restyle a pilot first, write three takes per unit, rank them, choose one whole take by reading, check that nothing but the voice changed, and promote only after recorded acceptance.",
+            "url": "https://sagol.github.io/mdrestyler/#restyle"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://sagol.github.io/mdrestyler/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Does mdrestyler judge whether my prose is good?",
+            "acceptedAnswer": {"@type": "Answer", "text": "No. The measures locate where a text drifts from a voice; a reading decides. A successful exit records a measurement. It does not establish literary quality, complete segmentation or originality, and mdrestyler never picks a take or accepts a change by the number."}
+          },
+          {
+            "@type": "Question",
+            "name": "Does a voice profile contain text from the books I scan?",
+            "acceptedAnswer": {"@type": "Answer", "text": "Not from reference books. A profile keeps measurements and described features of reference books, never their text, and only the author's own books may be quoted in it. The copy guard file holds winnowed hashes of 8-word runs and no text. The scan writes sample passages to a separate work folder, which you delete once the profile is written."}
+          },
+          {
+            "@type": "Question",
+            "name": "Which books can I build a profile from?",
+            "acceptedAnswer": {"@type": "Answer", "text": "DRM-free EPUBs: the author's own books (--own), books by other writers the author chooses (--reference), or both. An encrypted book is refused; never remove DRM. An author's own Markdown book can be scanned with --own-book and an eligibility file that records which units and passages are the author's original prose."}
+          },
+          {
+            "@type": "Question",
+            "name": "Which number should I watch during a restyle?",
+            "acceptedAnswer": {"@type": "Answer", "text": "The narration distance. The pooled voice distance also weighs how much of a unit is dialogue, which follows composition and length more than voice. In one test a restyle moved the narration distance from 1.21 to 0.93 while the pooled distance went from 1.15 to 1.14."}
+          },
+          {
+            "@type": "Question",
+            "name": "Can mdrestyler choose the best of several takes?",
+            "acceptedAnswer": {"@type": "Answer", "text": "No. The rank command orders takes: takes with a copy-guard run last, then by narration distance, voice distance and the number of measures outside. The order informs a reading and chooses nothing. In one test the take the measure put first was the one a blind reader put last."}
+          },
+          {
+            "@type": "Question",
+            "name": "What does the copy guard catch?",
+            "acceptedAnswer": {"@type": "Answer", "text": "Any passage of fifteen space-delimited words or more that a draft shares with a scanned book, when it runs unbroken in one of three readings: as a reader sees the text, with markup removed but hidden words kept, or as raw text. A shorter shared run is found only when one of its hashes was kept. A hit exits 1 and blocks the draft. The guard is against copying, not concealment, and it is not proof of originality."}
+          },
+          {
+            "@type": "Question",
+            "name": "Which languages does mdrestyler support?",
+            "acceptedAnswer": {"@type": "Answer", "text": "English and Russian have their own word lists. Other languages get the language-neutral measures. There is no word segmenter for Han, kana, Thai, Lao, Khmer or Myanmar; text in those scripts is processed, but segmentation is reported as partial."}
+          },
+          {
+            "@type": "Question",
+            "name": "What do I need to run mdrestyler?",
+            "acceptedAnswer": {"@type": "Answer", "text": "Python 3.10 or later. mdrestyler uses the standard library only and has no dependencies. Install it with pip install mdrestyler, or copy the skills/mdrestyler/ folder and run python3 scripts/mdrestyler.py from inside it with nothing installed."}
+          },
+          {
+            "@type": "Question",
+            "name": "Can I run mdrestyler in CI?",
+            "acceptedAnswer": {"@type": "Answer", "text": "Yes. The GitHub Action sagol/mdrestyler@v0.1.1 runs any mdrestyler command, set by the inputs command (default check), args and working-directory. The step exits with the command's status, so a copy-guard hit fails the job, and with --strict so does a measure outside its range."}
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <div id="copy-status-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./" aria-label="mdrestyler home">
+        <img class="brand-icon" src="favicon.svg" alt="" width="30" height="30">
+        <span>mdrestyler</span>
+        <span class="version-pill">v0.1.1</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary">
+        <a href="#install">Install</a>
+        <a href="#measures">Measures</a>
+        <a href="#restyle">Restyle</a>
+        <a href="#example">Example</a>
+        <a href="#commands">Commands</a>
+        <a href="#agents">AI agents</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="llm-pill-link" href="llms.txt" title="Short index for LLMs">llms.txt</a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to light theme">Light theme</button>
+        <a class="btn btn-secondary btn-sm" href="https://github.com/sagol/mdrestyler" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <div class="hero-eyebrow">
+          <span>Python CLI</span><span aria-hidden="true">·</span>
+          <span>Agent skill</span><span aria-hidden="true">·</span>
+          <span>GitHub Action</span><span aria-hidden="true">·</span>
+          <span>MIT</span>
+        </div>
+
+        <h1 id="hero-heading">Measure prose against an author's voice, and restyle a Markdown book toward it.</h1>
+
+        <p class="hero-lead">
+          <strong>mdrestyler</strong> builds a voice profile from DRM-free EPUBs or from an author's own Markdown book. It checks drafts against that profile with narration and dialogue measured apart, runs a copy guard so a draft that repeats a scanned book is caught, ranks several takes of one unit, and tables a whole book unit by unit. Its agent skill runs a need-first restyle: assess every unit, restyle only those that need it, pilot first, and check that nothing but the voice changed.
+        </p>
+        <p class="hero-note">
+          For writers, editors and authors working on a Markdown book, and for the AI coding agents that help them. The measures locate drift. A reading decides: mdrestyler never picks a take or accepts a change by the number.
+        </p>
+
+        <div class="hero-cta-row">
+          <a class="btn btn-primary" href="#install">Install mdrestyler</a>
+          <a class="btn btn-secondary" href="#example">See the worked example</a>
+          <a class="btn btn-secondary" href="#commands">Command reference</a>
+          <a class="btn btn-secondary" href="#agents">For AI agents</a>
+        </div>
+
+        <div class="hero-showcase">
+          <div id="install" class="tabs-container anchor-target">
+            <div class="tab-list" role="tablist" aria-label="Ways to install">
+              <button id="tab-pip" class="tab-btn" role="tab" aria-selected="true" aria-controls="panel-pip" tabindex="0" type="button">pip</button>
+              <button id="tab-skill" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-skill" tabindex="-1" type="button">Agent skill</button>
+              <button id="tab-action" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-action" tabindex="-1" type="button">GitHub Action</button>
+            </div>
+
+            <div id="panel-pip" class="tab-panel" role="tabpanel" aria-labelledby="tab-pip" tabindex="0">
+              <h2 class="tab-panel-title">Install with pip</h2>
+              <p>Python 3.10 or later. Standard library only, no dependencies.</p>
+              <div class="code-block-wrap">
+                <button class="copy-btn" type="button" data-copy-target="code-install-pip">Copy</button>
+                <pre><code id="code-install-pip">pip install mdrestyler
+mdrestyler --version
+mdrestyler --help</code></pre>
+              </div>
+              <p>The wheel is also attached to each <a href="https://github.com/sagol/mdrestyler/releases" rel="noopener">GitHub release</a>. <code>--version</code> prints the version, the source commit and the manifest digest.</p>
+            </div>
+
+            <div id="panel-skill" class="tab-panel" role="tabpanel" aria-labelledby="tab-skill" tabindex="0">
+              <h2 class="tab-panel-title">Use it as an agent skill</h2>
+              <p>The skill folder runs with nothing installed. Copy <code>skills/mdrestyler/</code> into your agent's skills folder; from inside it the command is <code class="wrap">python3 scripts/mdrestyler.py</code>.</p>
+              <div class="code-block-wrap">
+                <button class="copy-btn" type="button" data-copy-target="code-install-skill">Copy</button>
+                <pre><code id="code-install-skill">git clone --branch v0.1.1 https://github.com/sagol/mdrestyler.git
+cd mdrestyler
+python3 skills/mdrestyler/scripts/mdrestyler.py --help
+python3 skills/mdrestyler/scripts/mdrestyler.py verify</code></pre>
+              </div>
+              <p><code>verify</code> checks the skill folder against its manifest. The agent reads <a href="https://github.com/sagol/mdrestyler/blob/main/skills/mdrestyler/SKILL.md" rel="noopener">SKILL.md</a> and its references before it acts.</p>
+            </div>
+
+            <div id="panel-action" class="tab-panel" role="tabpanel" aria-labelledby="tab-action" tabindex="0">
+              <h2 class="tab-panel-title">Run it in GitHub Actions</h2>
+              <p>A composite action that runs one mdrestyler command with the runner's Python.</p>
+              <div class="code-block-wrap">
+                <button class="copy-btn" type="button" data-copy-target="code-install-action">Copy</button>
+                <pre><code id="code-install-action">- uses: sagol/mdrestyler@v0.1.1
+  with:
+    command: check
+    args: --profile voice chapters/01.md --strict</code></pre>
+              </div>
+              <p>Inputs: <code>command</code> (default <code>check</code>), <code>args</code> (one string, split like a shell would) and <code>working-directory</code> (default <code>.</code>). The step exits with the command's status, so a copy-guard hit fails the job. See <a href="https://github.com/sagol/mdrestyler/blob/main/action.yml" rel="noopener">action.yml</a>.</p>
+            </div>
+          </div>
+
+          <div class="code-window" role="region" aria-label="Example check output from the worked example">
+            <div class="code-window-bar">
+              <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+              <span>examples/cross-restyle</span>
+              <span>exit 0</span>
+            </div>
+            <pre><code><span class="cmd-comment"># Huck Finn, restyled toward The Turn of the Screw</span>
+<span class="cmd-prompt">$ </span>mdrestyler check --profile profiles/james \
+    restyle/twain-to-james/take-2.md
+Voice check
+Language: en; words: 1519
+Profile status: draft (not yet approved: …)
+Copy guard: <span class="cmd-ok">clear</span>
+Voice distance: 1.04 over 29 measure(s); closer to the
+  profile than 36% of its 22 source chapters
+
+| Measure                   | Draft | Target range  | Status  |
+| commas per 1000 words     | 77.7  | 69.5 to 96.0  | <span class="cmd-ok">within</span>  |
+| semicolons per 1000 words | 13.2  | 4.571 to 10.0 | <span class="cmd-warn">outside</span> |
+
+<span class="cmd-accent">Narration only (1413 words; voice distance 0.98,
+  closer to the profile than 55% of its 22 source
+  chapters' narration)</span>
+
+<span class="cmd-comment"># Excerpt. The full report: restyle/twain-to-james/check.md</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- What it measures -->
+    <section id="measures" class="section" aria-labelledby="measures-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">What it measures</span>
+          <h2 id="measures-heading" class="section-title">A check reports where a draft departs from a voice</h2>
+          <p class="section-desc">
+            Every report names the draft's SHA-256 and the profile's revision (the hashes of its three files), so a report is stale for any other revision. Then it gives the profile's status and the findings below.
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card">
+            <span class="feature-tag">Targets</span>
+            <h3>Each measure against its range</h3>
+            <p>Sentence and paragraph length, punctuation per 1,000 words, mean word length, vocabulary variety (MATTR), <code>-ly</code> adverbs, sentence openers, pronouns, past-tense share, dialogue share and speech tags. Each is within, near, outside or not measured, and marked weak when the draft is too short for it.</p>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-tag">Voice distance</span>
+            <h3>Distance from the profile's sources</h3>
+            <p>When the profile holds a calibration: the draft's mean robust distance from the source chapters, and the share of those chapters that lie farther from the rest. A draft farther than every source chapter is a finding. Under 1,200 words it reads less reliably.</p>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-tag">Narration / dialogue</span>
+            <h3>The author's words and the spoken words apart</h3>
+            <p>Each register is measured against its own ranges, and gets its own distance when the profile calibrates it and the draft holds 600 words of narration or 400 of dialogue. The narration distance leaves dialogue out, so it shows best what rewording can move.</p>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-tag">Copy guard</span>
+            <h3>Runs shared with a scanned book</h3>
+            <p>Any passage of fifteen words or more that a draft shares with a scanned book is found when it runs unbroken as a reader sees it, with markup removed, or as raw text. A hit exits <code>1</code> and blocks the draft.</p>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-tag">Revisions</span>
+            <h3>A revision against its accepted base</h3>
+            <p>With <code>--accepted base.md</code>, text the revision keeps unchanged, in place and unambiguous counts as the base's own. Repeated base text is a hit at every copy, moved text is uncertain, and inserted text stays checked.</p>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-tag">Takes and books</span>
+            <h3>Rank takes, table a book</h3>
+            <p><code>rank</code> orders two or more takes of one unit. <code>book</code> gives one row per unit in reading order, with a last column that reads the narration distance against a threshold: beyond, within or by reading. Both order a reading; neither decides.</p>
+          </article>
+        </div>
+
+        <div class="callout">
+          <p><strong>Read by the narration distance.</strong> The pooled distance also weighs how much of a unit is dialogue, which follows composition and length more than voice. In one test, on a chapter of a narration-led novel against a dialogue-led reference, a restyle moved the narration distance from 1.21 to 0.93 while the pooled distance went from 1.15 to 1.14.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Restyle procedure -->
+    <section id="restyle" class="section" aria-labelledby="restyle-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">How a restyle works</span>
+          <h2 id="restyle-heading" class="section-title">Need first, pilot first, one whole take by reading</h2>
+          <p class="section-desc">
+            A restyle rewrites chosen units of a book toward a profile and keeps everything but the voice. It spends takes only where the voice really differs, and nothing replaces accepted text before the user accepts it. The skill's <a href="https://github.com/sagol/mdrestyler/blob/main/skills/mdrestyler/references/restyle.md" rel="noopener">restyle procedure</a> has ten steps, with every record kept outside the manuscript in a run folder such as <code>restyle/run-1/</code>.
+          </p>
+        </div>
+
+        <ol class="steps">
+          <li>
+            <h3>Decision note</h3>
+            <p>The approved profile with its three hashes, the units in scope with their SHA-256, the threshold (<code>p90</code> by default), the pilot, the preserve list and who accepts. The book's owner confirms it before any take.</p>
+          </li>
+          <li>
+            <h3>Before table</h3>
+            <p><code>book</code> tables every unit in scope against the threshold, as text and as JSON.</p>
+          </li>
+          <li>
+            <h3>Need assessment</h3>
+            <p>Read every unit against the described voice, beyond-threshold units first. Record each as needing a restyle, naming the difference, or not, with its distances and hash. If no unit needs one, the run ends here.</p>
+          </li>
+          <li>
+            <h3>Pilot</h3>
+            <p>Restyle one unit that needs it and show it. Other units wait until the pilot is accepted. A rejected pilot changes the profile or the decision note, never the preservation rules.</p>
+          </li>
+          <li>
+            <h3>Each unit</h3>
+            <p>Save the accepted text as <code>snapshot.md</code>, write three takes from the same reading, rank them, read every take and choose one whole. Write why in <code>choice.md</code>. Never splice takes.</p>
+          </li>
+          <li>
+            <h3>Preservation</h3>
+            <p>Side by side with the snapshot: events and their order, facts, numbers, names, each dialogue line's speaker, act and meaning, what each character knows and when, and scene boundaries. A meaning change with unchanged numbers is a failure.</p>
+          </li>
+          <li>
+            <h3>Bounded checks</h3>
+            <p><code>check --accepted snapshot.md</code> for the copy guard and the narration measures, a prose check on every rewritten sentence, and a seam check at both joins. A guard that cannot run blocks promotion.</p>
+          </li>
+          <li>
+            <h3>Promotion</h3>
+            <p>Read the candidate back, diff it against the snapshot, record the acceptance, and only then replace the accepted text.</p>
+          </li>
+          <li>
+            <h3>Resume</h3>
+            <p>Each unit is classified, in order, as unknown, stale, done, promoted, pending or conflict. Only pending units continue to takes; a conflict is reported and nothing changes.</p>
+          </li>
+          <li>
+            <h3>After table</h3>
+            <p>Run the before commands again with the same <code>--within</code>. The tables locate change; the user's reading accepts it.</p>
+          </li>
+        </ol>
+
+        <h3 id="restyle-commands" class="anchor-target">Commands a restyle runs</h3>
+        <div class="code-block-wrap">
+          <button class="copy-btn" type="button" data-copy-target="code-restyle-before">Copy</button>
+          <pre><code id="code-restyle-before">mdrestyler book my-book --profile my-book/voice --list units.txt --within p90 &gt; restyle/run-1/before.md
+mdrestyler book my-book --profile my-book/voice --list units.txt --within p90 --json &gt; restyle/run-1/before.json
+mdrestyler rank --profile my-book/voice take-1.md take-2.md take-3.md
+mdrestyler check --profile my-book/voice take-2.md --accepted snapshot.md</code></pre>
+        </div>
+        <p class="prose">Drafting outside a restyle writes one take. A final draft, and each unit of a restyle, gets three independent takes, in fresh contexts where possible. Three takes cost about three drafts' tokens. See <a href="https://github.com/sagol/mdrestyler/blob/main/skills/mdrestyler/references/drafting.md" rel="noopener">drafting toward a profile</a>.</p>
+      </div>
+    </section>
+
+    <!-- Worked example -->
+    <section id="example" class="section" aria-labelledby="example-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Worked example</span>
+          <h2 id="example-heading" class="section-title">Huck Finn and the governess, restyled into each other's voice</h2>
+          <p class="section-desc">
+            The repository's <a href="https://github.com/sagol/mdrestyler/tree/main/examples/cross-restyle" rel="noopener">cross-restyle example</a> takes two public-domain passages, a passage of <cite>Adventures of Huckleberry Finn</cite> (Mark Twain, 1884) and one of <cite>The Turn of the Screw</cite> (Henry James, 1898), and restyles each toward the other's voice. It follows the restyle procedure from start to finish: a profile for each voice, a decision note, a need assessment, three takes per direction, a ranking, a choice made by reading, a preservation check, and before and after tables.
+          </p>
+        </div>
+
+        <div class="split-grid">
+          <div>
+            <h3>The two voices</h3>
+            <p><strong>Twain:</strong> a boy telling his own story in vernacular. Short words, nonstandard grammar, clauses chained with <em>and</em> and semicolons, almost no <code>-ly</code> adverbs, deadpan.</p>
+            <p><strong>James:</strong> a governess writing years later. Long suspended sentences full of qualifications, abstract and Latinate words, many <code>-ly</code> adverbs, analysis of every impression.</p>
+            <p>Both books are narrated in the first person and the past tense, so a restyle can keep the viewpoint and change only the voice. The passages are the opening of chapter VII of <cite>Huckleberry Finn</cite>, where Huck fakes his own murder (1,402 words), and the second half of chapter III of <cite>The Turn of the Screw</cite>, where the governess first sees a stranger on the tower (1,297 words).</p>
+          </div>
+          <div>
+            <h3>How the takes were made</h3>
+            <p>Three separate agents per direction each wrote one take, given only the snapshot, the target profile and its narration ranges, with the preservation rules and no measuring tool. Both profiles were scanned from their books as reference books, and both are drafts: no author approved them, which a real restyle requires.</p>
+            <p>For the escape passage the reading chose the take the ranking put first. For the tower passage it chose the second: the first-ranked take kept the source's long paragraphs, so the vernacular sat inside the governess's paragraph shape.</p>
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table>
+            <caption>Narration distance from each profile. Lower is closer; within and beyond read the distance against the 90th percentile of the profile's own chapters (Twain 1.18, James 1.17).</caption>
+            <thead>
+              <tr>
+                <th scope="col">Text</th>
+                <th scope="col" class="num">Twain profile</th>
+                <th scope="col" class="num">James profile</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Twain passage</th>
+                <td class="num"><span class="result-best">0.84</span> <span class="badge badge-pass">within</span></td>
+                <td class="num">1.63 <span class="badge badge-warn">beyond</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Twain passage restyled toward James</th>
+                <td class="num">1.20 <span class="badge badge-warn">beyond</span></td>
+                <td class="num"><span class="result-best">0.98</span> <span class="badge badge-pass">within</span></td>
+              </tr>
+              <tr>
+                <th scope="row">James passage</th>
+                <td class="num">2.31 <span class="badge badge-warn">beyond</span></td>
+                <td class="num"><span class="result-best">1.17</span> <span class="badge badge-pass">within</span></td>
+              </tr>
+              <tr>
+                <th scope="row">James passage restyled toward Twain</th>
+                <td class="num"><span class="result-best">1.11</span> <span class="badge badge-pass">within</span></td>
+                <td class="num">1.34 <span class="badge badge-warn">beyond</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="prose">Each restyle crosses over: the text moves inside the target's range and out of its source's. The escape passage, restyled, lies nearer the James profile than 55% of the James book's own chapters.</p>
+
+        <div class="example-grid">
+          <figure class="passage">
+            <figcaption>Twain, chapter VII (source)</figcaption>
+            <blockquote cite="https://github.com/sagol/mdrestyler/blob/main/examples/cross-restyle/passages/twain.md">
+              <p>He unlocked the door, and I cleared out up the river-bank. I noticed some pieces of limbs and such things floating down, and a sprinkling of bark; so I knowed the river had begun to rise. I reckoned I would have great times now if I was over at the town.</p>
+            </blockquote>
+          </figure>
+          <figure class="passage passage-after">
+            <figcaption>Restyled toward James (chosen take 2)</figcaption>
+            <blockquote cite="https://github.com/sagol/mdrestyler/blob/main/examples/cross-restyle/restyle/twain-to-james/take-2.md">
+              <p>He unlocked the door, and I took myself off up the river-bank. I noticed, as I went, certain pieces of limbs and such things floating down, together with a sprinkling of bark; and from these I knew, beyond any doubt, that the river had begun to rise. I reckoned, as I remember, that I should have great times of it now if only I had been over at the town.</p>
+            </blockquote>
+          </figure>
+        </div>
+
+        <h3>What moved in the narration</h3>
+        <ul class="prose">
+          <li><strong>Toward James:</strong> commas per 1,000 words rose from 49 to 80, into the target range; <code>-ly</code> adverbs from 1.5 to 8.5, still below the target's 12 to 23; long sentences from 20% to 32%; the past-tense share from 0.91 to 0.99. Mean word length barely moved (3.75 to 3.79), because the events are told in plain words and a restyle may not add new matter to say in longer ones.</li>
+          <li><strong>Toward Twain:</strong> <code>-ly</code> adverbs fell from 11.6 to 2.0 per 1,000 words, dashes from 17 to 7, vocabulary variety from 0.49 to 0.45 and the median paragraph from 338 words to 87, all into or near the target ranges. Sentences stayed more evenly long than the target's (variation 0.45 against 0.68 to 1.16): the governess's qualifications had to stay, and they keep the sentences long.</li>
+          <li><strong>Pooled against narration:</strong> the tower passage restyled toward Twain has a narration distance of 1.11 but a pooled distance of 1.71. The Twain book is a third dialogue and the passage has none; rewording cannot change that.</li>
+          <li><strong>The copy guard sees the source.</strong> The chosen takes still share 66 and 4 runs with their source books, mostly lists and short phrases a restyle keeps. In a real restyle the check runs with <code>--accepted snapshot.md</code>. Against the target's guard, every take is clear.</li>
+        </ul>
+
+        <ul class="link-list" aria-label="Example files on GitHub">
+          <li><a class="btn btn-secondary btn-sm" href="https://github.com/sagol/mdrestyler/blob/main/examples/cross-restyle/README.md" rel="noopener">Example README</a></li>
+          <li><a class="btn btn-secondary btn-sm" href="https://github.com/sagol/mdrestyler/blob/main/examples/cross-restyle/results/matrix.md" rel="noopener">Every take against both profiles</a></li>
+          <li><a class="btn btn-secondary btn-sm" href="https://github.com/sagol/mdrestyler/blob/main/examples/cross-restyle/results/matrix.json" rel="noopener">matrix.json</a></li>
+          <li><a class="btn btn-secondary btn-sm" href="https://github.com/sagol/mdrestyler/blob/main/examples/cross-restyle/restyle/james-to-twain/choice.md" rel="noopener">Why the reading chose take 1</a></li>
+          <li><a class="btn btn-secondary btn-sm" href="https://github.com/sagol/mdrestyler/blob/main/examples/cross-restyle/restyle/twain-to-james/lock-check.md" rel="noopener">Preservation check</a></li>
+          <li><a class="btn btn-secondary btn-sm" href="https://github.com/sagol/mdrestyler/tree/main/examples/cross-restyle/profiles" rel="noopener">The two profiles</a></li>
+        </ul>
+
+        <h3>Run it yourself</h3>
+        <div class="code-block-wrap">
+          <button class="copy-btn" type="button" data-copy-target="code-example-run">Copy</button>
+          <pre><code id="code-example-run">cd examples/cross-restyle
+python3 run.py            # regenerate the reports under restyle/ and results/
+python3 run.py --check    # exit 1 if a committed report is stale</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Commands reference -->
+    <section id="commands" class="section" aria-labelledby="commands-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Reference</span>
+          <h2 id="commands-heading" class="section-title">Commands, flags and exit codes</h2>
+          <p class="section-desc">
+            Installed from the wheel, the command is <code>mdrestyler</code>. From the skill folder with nothing installed it is <code class="wrap">python3 scripts/mdrestyler.py</code>, with the same commands. Each command's <code>--help</code> says more.
+          </p>
+        </div>
+
+        <div id="command-filter" class="filter-controls" hidden>
+          <input id="command-search" class="search-input" type="search" placeholder="Filter commands, for example --json or exit 1" aria-label="Filter commands" aria-controls="command-rows">
+          <span id="command-count" class="version-pill" aria-live="polite">Showing 8 of 8 commands</span>
+        </div>
+
+        <div class="table-scroll">
+          <table class="table-commands table-stack">
+            <caption class="sr-only">mdrestyler commands with their key flags and exit codes</caption>
+            <thead>
+              <tr>
+                <th scope="col">Command</th>
+                <th scope="col">What it does, key flags</th>
+                <th scope="col">Exit codes</th>
+              </tr>
+            </thead>
+            <tbody id="command-rows">
+              <tr>
+                <td data-label="Command"><code>scan</code></td>
+                <td data-label="What it does">Builds a voice profile, one per language with enough text, from <code>--own EPUB</code> and <code>--reference EPUB</code> (each repeatable), or from <code class="wrap">--own-book BOOK --eligibility FILE</code>. Writes the profile to <code>--out</code> and sample passages to <code>--work</code> (both required, both outside any book). <code>--min-words</code> (default 3000), <code>--replace</code> (old files move to <code>history/</code>), <code>--max-expanded-mb</code> (default 64).</td>
+                <td data-label="Exit codes"><code>0</code> built · <code>1</code> refused (DRM, a size limit, an existing profile, a folder inside a book, a destination that is a symbolic link, the same book twice) or no language had enough text · <code>2</code> error (a damaged archive, an input that is not a regular file, a language tag that names no language)</td>
+              </tr>
+              <tr>
+                <td data-label="Command"><code>check</code></td>
+                <td data-label="What it does">Measures one or more drafts against <code>--profile FOLDER</code> and runs the copy guard. <code>--lang</code> (default: from the draft's script), <code>--json</code>, <code>--strict</code>, <code>--accepted BASE</code> for a revision of one unit.</td>
+                <td data-label="Exit codes"><code>0</code> measured · <code>1</code> the copy guard found a run, or with <code>--strict</code> a measure is outside and not weak, or could not be compared · <code>2</code> error, including a profile or guard that is not valid</td>
+              </tr>
+              <tr>
+                <td data-label="Command"><code>rank</code></td>
+                <td data-label="What it does">Orders two or more takes of one unit, each checked alone: copy-guard runs last, then narration distance, voice distance and measures outside. <code>--profile</code>, <code>--lang</code>, <code>--json</code>.</td>
+                <td data-label="Exit codes"><code>0</code> ranking printed (it informs; it does not gate) · <code>2</code> error</td>
+              </tr>
+              <tr>
+                <td data-label="Command"><code>book</code></td>
+                <td data-label="What it does">Checks every unit a <code>--list</code> file names, in reading order, one row each: <code class="wrap">mdrestyler book BOOK --profile FOLDER --list UNITS</code>. <code>--within</code> sets the threshold: <code>p50</code>, <code>p90</code> (default), <code>max</code> or a number. <code>--lang</code>, <code>--json</code>.</td>
+                <td data-label="Exit codes"><code>0</code> table printed · <code>2</code> a unit outside the book, missing, named twice or not Markdown, or an invalid profile</td>
+              </tr>
+              <tr>
+                <td data-label="Command"><code>install</code></td>
+                <td data-label="What it does">Installs a profile into a profile folder: <code class="wrap">mdrestyler install FOLDER [SOURCE] --lang LANG</code>. Without a source, the shipped default for the language. <code>--replace</code> replaces a draft or approved profile and keeps its files under <code>history/</code>.</td>
+                <td data-label="Exit codes"><code>0</code> installed (prints JSON) · <code>1</code> not installed, for example a profile already there and no <code>--replace</code> · <code>2</code> usage error</td>
+              </tr>
+              <tr>
+                <td data-label="Command"><code>profile validate</code></td>
+                <td data-label="What it does">Reports a profile folder's status and revision as JSON, or why it is not valid: <code class="wrap">mdrestyler profile validate FOLDER --lang LANG</code>.</td>
+                <td data-label="Exit codes"><code>0</code> valid · <code>2</code> not valid, or <code>--lang</code> missing</td>
+              </tr>
+              <tr>
+                <td data-label="Command"><code>verify</code></td>
+                <td data-label="What it does">Checks the skill folder it runs from against <code>MANIFEST.json</code>; <code>--expect DIGEST</code> checks the manifest's digest too. Prints JSON with <code>ok</code> and <code>manifest_sha256</code>.</td>
+                <td data-label="Exit codes"><code>0</code> matches · <code>1</code> a file missing, changed or unlisted, or another digest · <code>2</code> not run from a skill folder</td>
+              </tr>
+              <tr>
+                <td data-label="Command"><code>--version</code></td>
+                <td data-label="What it does">Prints the version, the source commit and the manifest digest, which is what a product built on mdrestyler pins.</td>
+                <td data-label="Exit codes"><code>0</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Examples</h3>
+        <div class="code-block-wrap">
+          <button class="copy-btn" type="button" data-copy-target="code-commands">Copy</button>
+          <pre><code id="code-commands">mdrestyler scan --own mine.epub --reference theirs.epub --out profile --work work
+mdrestyler scan --own-book my-book --eligibility eligibility.json --out profile --work work
+mdrestyler install my-book/voice profile --lang en
+mdrestyler profile validate my-book/voice --lang en
+mdrestyler check --profile my-book/voice chapter-01.md --strict
+mdrestyler check --profile my-book/voice revised.md --accepted base.md --json
+mdrestyler rank --profile my-book/voice take-1.md take-2.md take-3.md
+mdrestyler book my-book --profile my-book/voice --list units.txt --within p90
+mdrestyler --version</code></pre>
+        </div>
+        <p class="prose">The <code>--list</code> file names the units in reading order, one path per line relative to the book; blank lines and <code>#</code> lines are skipped. A unit with no prose, such as a part title, is listed as not measured.</p>
+      </div>
+    </section>
+
+    <!-- Profiles and the copy guard -->
+    <section id="profiles" class="section" aria-labelledby="profiles-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Profiles and the copy guard</span>
+          <h2 id="profiles-heading" class="section-title">Reference books are measured, never quoted</h2>
+          <p class="section-desc">
+            A profile keeps measurements and described features of reference books, never their text. Only the author's own books may be quoted in it, and briefly. A text never names a reference author or says it imitates one.
+          </p>
+        </div>
+
+        <div class="table-scroll">
+          <table class="table-stack">
+            <caption>A profile folder holds one profile per language</caption>
+            <thead>
+              <tr>
+                <th scope="col">File</th>
+                <th scope="col">Holds</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>AUTHOR_PROFILE.&lt;lang&gt;.md</code></td>
+                <td>The described voice and a table of the measured targets; its status: default, draft or approved.</td>
+              </tr>
+              <tr>
+                <td><code>author-profile.&lt;lang&gt;.json</code></td>
+                <td>The measures, target ranges, function-word fingerprint, calibration, and narration and dialogue ranges, with each source's hash. Schema <code>mdrestyler-author-profile/1</code>.</td>
+              </tr>
+              <tr>
+                <td><code>copy-guard.&lt;lang&gt;.json</code></td>
+                <td>Winnowed hashes of the scanned books' 8-word runs, no text. Schema <code>mdrestyler-copy-guard/1</code>. The measures record its SHA-256 (<code>copy_guard_sha256</code>), so a guard from other books, or an edited one, is refused.</td>
+              </tr>
+              <tr>
+                <td><code>history/&lt;time&gt;/</code></td>
+                <td>Earlier profiles, kept when one is replaced.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="split-grid">
+          <div>
+            <h3>Build, describe, approve, install</h3>
+            <ol>
+              <li>Collect DRM-free EPUBs: the author's own (<code>--own</code>), books by other writers the author chooses (<code>--reference</code>), or both. An encrypted book is refused; never remove DRM.</li>
+              <li>Scan into a profile folder, with the samples in a separate work folder, both outside any manuscript.</li>
+              <li>Write the described voice in <code>AUTHOR_PROFILE.&lt;lang&gt;.md</code>: what the voice does, not only what it avoids. Keep observation, inference and the author's wishes apart.</li>
+              <li>Delete the samples file. Show the profile to the author and record the corrections.</li>
+              <li>When the author approves it, write the date on the one approval field under <code>## Approval</code>, for example <code class="wrap">- Approved by the author on: 2026-10-03</code>.</li>
+              <li>Install it. A draft can be installed before approval and stays a draft.</li>
+            </ol>
+            <p>mdrestyler ships a default for English and for Russian: a starting voice for contemporary literary prose, built from no book. An edited default reads as a draft.</p>
+          </div>
+          <div>
+            <h3>The author's own Markdown book</h3>
+            <p>Once the author confirms which units and passages are their original prose, write that confirmation as an eligibility file and scan with <code class="wrap">--own-book BOOK --eligibility FILE</code>. Only eligible units are measured and sampled; every unit in <code>order</code>, notes included, feeds the copy guard. A unit whose bytes changed since its confirmation stops the scan.</p>
+            <div class="code-block-wrap">
+              <button class="copy-btn" type="button" data-copy-target="code-eligibility">Copy</button>
+              <pre><code id="code-eligibility">{"decision": "Author's confirmation, 2026-10-01",
+ "language": "en",
+ "title": "The book's title",
+ "order": ["01-first.md", "02-second.md"],
+ "units": {
+   "01-first.md": {"eligible": true, "sha256": "...",
+                   "exclude": ["a passage that is not theirs"]},
+   "02-second.md": {"eligible": false}}}</code></pre>
+            </div>
+            <p>The profile's files are identified by their bytes. Keep Git from converting their line endings with a <code>.gitattributes</code> line such as <code>voice/** -text</code>.</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <p><strong>The copy guard</strong> keeps the smallest hash in every eight consecutive 8-word runs of each book. It checks every run of a draft's words three ways: as a reader sees them, with markup removed but hidden words kept, and as raw text. It guards against copying, not concealment, and it is not proof of originality. A profile in a public repository is public, source list included.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- For AI agents -->
+    <section id="agents" class="section" aria-labelledby="agents-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">For AI agents</span>
+          <h2 id="agents-heading" class="section-title">An agent skill, JSON output and machine-readable docs</h2>
+          <p class="section-desc">
+            mdrestyler ships as an agent skill: <code>SKILL.md</code> and four references an AI coding agent reads before it builds a profile, drafts toward one or restyles a book. The rules travel with it: the measures locate, the reading decides, and a copy-guard hit blocks a candidate.
+          </p>
+        </div>
+
+        <div class="agent-grid">
+          <article class="agent-card">
+            <h3><span><code>SKILL.md</code></span> <span class="badge badge-info">skill</span></h3>
+            <p>The commands, what to read before acting, and the rules that always hold. Its references cover <a href="https://github.com/sagol/mdrestyler/blob/main/skills/mdrestyler/references/profile.md" rel="noopener">profiles</a>, <a href="https://github.com/sagol/mdrestyler/blob/main/skills/mdrestyler/references/measures.md" rel="noopener">reading the measures</a>, <a href="https://github.com/sagol/mdrestyler/blob/main/skills/mdrestyler/references/drafting.md" rel="noopener">drafting</a> and <a href="https://github.com/sagol/mdrestyler/blob/main/skills/mdrestyler/references/restyle.md" rel="noopener">restyling a book</a>.</p>
+            <a class="btn btn-secondary btn-sm" href="https://raw.githubusercontent.com/sagol/mdrestyler/main/skills/mdrestyler/SKILL.md" rel="noopener">Read SKILL.md</a>
+          </article>
+
+          <article class="agent-card">
+            <h3><span>JSON output</span> <span class="badge badge-pass">--json</span></h3>
+            <p><code>check</code>, <code>rank</code> and <code>book</code> print JSON with <code>--json</code>. A check holds <code>copy_guard_hits</code>, <code>measures</code> (each with <code>value</code>, <code>low</code>, <code>high</code> and <code>status</code>), <code>voice_distance</code>, <code>registers</code> for narration and dialogue, and the <code>profile</code> revision and status. <code>scan</code>, <code>install</code>, <code>profile validate</code> and <code>verify</code> always print JSON.</p>
+          </article>
+
+          <article class="agent-card">
+            <h3><span>Building on it</span> <span class="badge badge-warn">embed</span></h3>
+            <p>A tool that embeds mdrestyler configures it once per process with <code>mdrestyler.names.configure(…)</code>: its message names, who decides a delegated approval, its book layout, and which earlier profile schemas and defaults it still reads. Pin a release by its manifest digest from <code>mdrestyler --version</code>.</p>
+          </article>
+        </div>
+
+        <h3>A prompt for a coding agent</h3>
+        <div class="code-block-wrap">
+          <button class="copy-btn" type="button" data-copy-target="code-agent-prompt">Copy</button>
+          <pre><code id="code-agent-prompt">Read https://sagol.github.io/mdrestyler/llms-full.txt and
+https://raw.githubusercontent.com/sagol/mdrestyler/main/skills/mdrestyler/SKILL.md
+with every file in its references/ folder. Then table the book:
+mdrestyler book my-book --profile my-book/voice --list units.txt --within p90 --json
+Assess every unit by reading before writing any take. Never choose a take,
+or accept a change, by the numbers alone, and never splice takes.</code></pre>
+        </div>
+
+        <div class="endpoints-bar" role="region" aria-label="Machine-readable resources">
+          <div class="endpoint-item">
+            <strong><a href="llms.txt">/llms.txt</a></strong>
+            <span>A short llmstxt.org index: install, commands and links.</span>
+          </div>
+          <div class="endpoint-item">
+            <strong><a href="llms-full.txt">/llms-full.txt</a></strong>
+            <span>One file with every command and flag, exit codes, profile files and schemas, the restyle procedure, the measures and the limits.</span>
+          </div>
+          <div class="endpoint-item">
+            <strong><a href="agents.json">/agents.json</a></strong>
+            <span>A JSON capability manifest, also pointed to from <a href=".well-known/agent.json"><code>/.well-known/agent.json</code></a>.</span>
+          </div>
+          <div class="endpoint-item">
+            <strong><code>mdrestyler check --json</code></strong>
+            <span>The full report as JSON, for an agent to read field by field.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Limits -->
+    <section id="limits" class="section" aria-labelledby="limits-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Limits</span>
+          <h2 id="limits-heading" class="section-title">What a measurement does not tell you</h2>
+          <p class="section-desc">
+            A successful exit records a measurement. It does not establish quality, complete segmentation or originality.
+          </p>
+        </div>
+
+        <ul class="limits-list">
+          <li><strong>Quality.</strong> The measures locate drift for a reader. They do not establish literary quality. Drift that the scene's purpose explains is a question for the author, not a fix.</li>
+          <li><strong>Choosing takes.</strong> In one test the takes lay within 0.09 of each other, and the take the measure put first was the one a blind reader put last.</li>
+          <li><strong>Originality.</strong> The copy guard guards against copying, not concealment. A shared run shorter than fifteen words is found only when one of its hashes was kept.</li>
+          <li><strong>Short texts.</strong> Under 1,200 words the voice distance reads less reliably, and measures a draft is too short for are marked weak. Calibration needs five source chapters of 1,200 words or more.</li>
+          <li><strong>Languages.</strong> English and Russian have word lists; other languages get only the language-neutral measures. There is no word segmenter for Han, kana, Thai, Lao, Khmer or Myanmar, so segmentation there is reported as partial and a guard with no hits says partial, not clear.</li>
+          <li><strong>Russian dialogue.</strong> Dash-led speech is read as dialogue. Speech in «ёлочки» is measured as narration, because Russian prose sets titles, thoughts and quotations in them as often as speech.</li>
+          <li><strong>Scan size.</strong> At most 64 MiB of expanded EPUB text across the books by default (<code>--max-expanded-mb</code>), with fixed ceilings of 256 MiB per EPUB, 10,000 entries, 16 MiB per text entry and 4,000,000 words.</li>
+          <li><strong>Stylesheets.</strong> What an EPUB shows is judged from its CSS. Rules the scan cannot settle are never applied, and the profile marks its styles partial.</li>
+          <li><strong>Reproducibility.</strong> On Python 3.10 and 3.11 a few full-precision values in <code>--json</code> output can differ in their last digit between runs; Python 3.12 and later, or <code>PYTHONHASHSEED=0</code>, give the same bytes every run.</li>
+          <li><strong>Tests.</strong> The skill tests are static checks of the text: they say a rule is written, not that an agent follows it. Hosted CI may not run for the repository; local runs on Python 3.10 and 3.14 are the record. See <a href="https://github.com/sagol/mdrestyler/blob/main/docs/VALIDATION.md" rel="noopener">VALIDATION.md</a>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section" aria-labelledby="faq-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Questions</span>
+          <h2 id="faq-heading" class="section-title">Frequently asked questions</h2>
+        </div>
+
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary>Does mdrestyler judge whether my prose is good?</summary>
+            <p>No. The measures locate where a text drifts from a voice; a reading decides. A successful exit records a measurement. It does not establish literary quality, complete segmentation or originality, and mdrestyler never picks a take or accepts a change by the number.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Does a voice profile contain text from the books I scan?</summary>
+            <p>Not from reference books. A profile keeps measurements and described features of reference books, never their text, and only the author's own books may be quoted in it. The copy guard file holds winnowed hashes of 8-word runs and no text. The scan writes sample passages to a separate work folder, which you delete once the profile is written.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Which books can I build a profile from?</summary>
+            <p>DRM-free EPUBs: the author's own books (<code>--own</code>), books by other writers the author chooses (<code>--reference</code>), or both. An encrypted book is refused; never remove DRM. An author's own Markdown book can be scanned with <code>--own-book</code> and an eligibility file that records which units and passages are the author's original prose.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Which number should I watch during a restyle?</summary>
+            <p>The narration distance. The pooled voice distance also weighs how much of a unit is dialogue, which follows composition and length more than voice. In one test a restyle moved the narration distance from 1.21 to 0.93 while the pooled distance went from 1.15 to 1.14.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can mdrestyler choose the best of several takes?</summary>
+            <p>No. The <code>rank</code> command orders takes: takes with a copy-guard run last, then by narration distance, voice distance and the number of measures outside. The order informs a reading and chooses nothing. In one test the take the measure put first was the one a blind reader put last.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What does the copy guard catch?</summary>
+            <p>Any passage of fifteen space-delimited words or more that a draft shares with a scanned book, when it runs unbroken in one of three readings: as a reader sees the text, with markup removed but hidden words kept, or as raw text. A shorter shared run is found only when one of its hashes was kept. A hit exits 1 and blocks the draft. The guard is against copying, not concealment, and it is not proof of originality.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Which languages does mdrestyler support?</summary>
+            <p>English and Russian have their own word lists. Other languages get the language-neutral measures. There is no word segmenter for Han, kana, Thai, Lao, Khmer or Myanmar; text in those scripts is processed, but segmentation is reported as partial.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What do I need to run mdrestyler?</summary>
+            <p>Python 3.10 or later. mdrestyler uses the standard library only and has no dependencies. Install it with <code>pip install mdrestyler</code>, or copy the <code>skills/mdrestyler/</code> folder and run <code class="wrap">python3 scripts/mdrestyler.py</code> from inside it with nothing installed.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can I run mdrestyler in CI?</summary>
+            <p>Yes. The GitHub Action <code>sagol/mdrestyler@v0.1.1</code> runs any mdrestyler command, set by the inputs <code>command</code> (default <code>check</code>), <code>args</code> and <code>working-directory</code>. The step exits with the command's status, so a copy-guard hit fails the job, and with <code>--strict</code> so does a measure outside its range.</p>
+          </details>
+        </div>
+
+        <h3>Documentation</h3>
+        <div class="docs-grid">
+          <a class="doc-link-card" href="https://github.com/sagol/mdrestyler/blob/main/README.md" rel="noopener"><strong>README</strong><span>Install, use, the example and building on mdrestyler.</span></a>
+          <a class="doc-link-card" href="https://github.com/sagol/mdrestyler/blob/main/skills/mdrestyler/references/measures.md" rel="noopener"><strong>Reading the measures</strong><span>Checks, takes, the book table, calibration, languages and limits.</span></a>
+          <a class="doc-link-card" href="https://github.com/sagol/mdrestyler/blob/main/skills/mdrestyler/references/profile.md" rel="noopener"><strong>Profiles</strong><span>Files, building, describing the voice, approval and reference books.</span></a>
+          <a class="doc-link-card" href="https://github.com/sagol/mdrestyler/blob/main/skills/mdrestyler/references/restyle.md" rel="noopener"><strong>Restyle a book</strong><span>The ten-step need-first procedure.</span></a>
+          <a class="doc-link-card" href="https://github.com/sagol/mdrestyler/blob/main/docs/VALIDATION.md" rel="noopener"><strong>Validation</strong><span>What the tests cover and the known limits.</span></a>
+          <a class="doc-link-card" href="https://github.com/sagol/mdrestyler/blob/main/CHANGELOG.md" rel="noopener"><strong>Changelog</strong><span>What changed in each release.</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>mdrestyler v0.1.1</strong> · by <a href="https://github.com/sagol" rel="noopener">Taras Baranyuk</a> · <a href="https://github.com/sagol/mdrestyler/blob/main/LICENSE" rel="noopener">MIT License</a>.<br>
+        The idea of reading a draft against the author's own held-out text, and of measuring style by mode, comes from AuthorStyle by Fernando Paladini (MIT); the implementation is mdrestyler's own.
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="https://github.com/sagol/mdrestyler" rel="noopener">GitHub</a>
+        <a href="https://pypi.org/project/mdrestyler/" rel="noopener">PyPI</a>
+        <a href="https://github.com/sagol/mdrestyler/releases" rel="noopener">Releases</a>
+        <a href="https://github.com/sagol/mdrestyler/blob/main/CHANGELOG.md" rel="noopener">Changelog</a>
+        <a href="https://github.com/sagol/mdrestyler/blob/main/LICENSE" rel="noopener">License</a>
+        <a href="llms.txt">llms.txt</a>
+        <a href="llms-full.txt">llms-full.txt</a>
+        <a href="agents.json">agents.json</a>
+        <a href="sitemap.xml">sitemap.xml</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

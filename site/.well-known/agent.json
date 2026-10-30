@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "name": "mdrestyler",
+  "version": "0.1.1",
+  "description": "Measure prose against an author voice profile, guard against copying, and restyle a Markdown book toward it.",
+  "canonical_manifest": "https://sagol.github.io/mdrestyler/agents.json",
+  "llms_txt": "https://sagol.github.io/mdrestyler/llms.txt",
+  "llms_full_txt": "https://sagol.github.io/mdrestyler/llms-full.txt",
+  "skill": "https://raw.githubusercontent.com/sagol/mdrestyler/main/skills/mdrestyler/SKILL.md"
+}

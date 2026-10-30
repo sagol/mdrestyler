@@ -1,0 +1,86 @@
+# mdrestyler
+
+> Measure prose against an author voice profile, and restyle a Markdown book toward it. mdrestyler builds a profile from DRM-free EPUBs or the author's own Markdown book, checks drafts (each measure against its range, the voice distance, narration and dialogue apart), runs a copy guard, ranks takes of one unit, tables a whole book, and ships an agent skill with a need-first restyle procedure. The measures locate drift; a reading decides. It never picks a take or accepts a change by the number.
+
+- Version: `0.1.1`
+- License: MIT
+- Author: Taras Baranyuk (https://github.com/sagol)
+- Requires: Python 3.10 or later, standard library only, no dependencies
+- Languages: English and Russian word lists; other languages get the language-neutral measures
+- Repository: https://github.com/sagol/mdrestyler
+- PyPI: https://pypi.org/project/mdrestyler/
+- Releases: https://github.com/sagol/mdrestyler/releases
+- Site: https://sagol.github.io/mdrestyler/
+- Full reference for LLMs: https://sagol.github.io/mdrestyler/llms-full.txt
+- Agent manifest: https://sagol.github.io/mdrestyler/agents.json
+
+## Install
+
+```bash
+# From PyPI (the wheel is also attached to each GitHub release)
+pip install mdrestyler
+mdrestyler --version
+
+# As an agent skill: copy skills/mdrestyler/ into the agent's skills folder; it runs with nothing installed
+git clone --branch v0.1.1 https://github.com/sagol/mdrestyler.git
+python3 mdrestyler/skills/mdrestyler/scripts/mdrestyler.py --help
+```
+
+GitHub Action:
+
+```yaml
+- uses: sagol/mdrestyler@v0.1.1
+  with:
+    command: check
+    args: --profile voice chapters/01.md --strict
+```
+
+Inputs: `command` (default `check`), `args` (one string, split like a shell would), `working-directory` (default `.`). The step exits with the command's status.
+
+## Commands
+
+```bash
+mdrestyler scan --own mine.epub --reference theirs.epub --out profile --work work
+mdrestyler install my-book/voice profile --lang en
+mdrestyler profile validate my-book/voice --lang en
+mdrestyler check --profile my-book/voice chapter-01.md --json
+mdrestyler check --profile my-book/voice revised.md --accepted base.md
+mdrestyler rank --profile my-book/voice take-1.md take-2.md take-3.md
+mdrestyler book my-book --profile my-book/voice --list units.txt --within p90
+mdrestyler --version
+```
+
+Exit codes: `check` 0 measured, 1 the copy guard found a run (or with `--strict` a measure is outside), 2 error. `scan` 0 built, 1 refused or no language had enough text, 2 error. `rank` and `book` 0 table printed, 2 error. `install` 0, 1 not installed, 2 usage. `profile validate` 0 valid, 2 not valid. `verify` 0 matches, 1 mismatch, 2 not run from a skill folder.
+
+## Rules an agent must keep
+
+- The measures locate drift; a reading decides. Never choose a take, accept a change or rewrite a sentence by the number alone.
+- Read the narration distance during a restyle; the pooled distance also weighs the share of dialogue.
+- Only the author's own books may be quoted in a profile. A reference book's text never enters a profile, a draft or a book.
+- A copy-guard hit blocks a candidate. If the check cannot run, the candidate stays unfinished.
+- Write three takes per restyled unit, choose one whole take by reading, never splice takes, and promote only after recorded acceptance.
+
+## Agent skill
+
+- [SKILL.md](https://raw.githubusercontent.com/sagol/mdrestyler/main/skills/mdrestyler/SKILL.md): commands, what to read before acting, and the rules that always hold.
+- [references/profile.md](https://raw.githubusercontent.com/sagol/mdrestyler/main/skills/mdrestyler/references/profile.md): building a profile, describing the voice, approval, installing, reference books.
+- [references/measures.md](https://raw.githubusercontent.com/sagol/mdrestyler/main/skills/mdrestyler/references/measures.md): what a check reports and how to read it, takes, the book table, calibration, languages and limits.
+- [references/drafting.md](https://raw.githubusercontent.com/sagol/mdrestyler/main/skills/mdrestyler/references/drafting.md): drafting toward a profile, one take or three.
+- [references/restyle.md](https://raw.githubusercontent.com/sagol/mdrestyler/main/skills/mdrestyler/references/restyle.md): the ten-step need-first restyle of chapters or a whole book.
+
+## Docs
+
+- [README](https://raw.githubusercontent.com/sagol/mdrestyler/main/README.md): install, use, the example, building on mdrestyler, reference books.
+- [Validation](https://raw.githubusercontent.com/sagol/mdrestyler/main/docs/VALIDATION.md): what the tests cover and the known limits.
+- [Changelog](https://raw.githubusercontent.com/sagol/mdrestyler/main/CHANGELOG.md): changes by release.
+- [action.yml](https://raw.githubusercontent.com/sagol/mdrestyler/main/action.yml): the GitHub Action.
+
+## Example
+
+- [Cross-restyle example](https://raw.githubusercontent.com/sagol/mdrestyler/main/examples/cross-restyle/README.md): a passage of Huckleberry Finn restyled toward The Turn of the Screw and back, with profiles, takes, choices and measures before and after.
+- [Results matrix](https://raw.githubusercontent.com/sagol/mdrestyler/main/examples/cross-restyle/results/matrix.md): every take against both profiles, and every narration measure before and after.
+
+## Optional
+
+- [Site](https://sagol.github.io/mdrestyler/): landing page and reference.
+- [Full reference](https://sagol.github.io/mdrestyler/llms-full.txt): every command with all flags, exit codes, profile files and schemas, the restyle procedure, measures and limits.
