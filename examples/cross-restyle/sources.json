@@ -1,0 +1,20 @@
+{
+  "twain": {
+    "title": "Adventures of Huckleberry Finn",
+    "author": "Mark Twain",
+    "published": 1884,
+    "gutenberg": 76,
+    "url": "https://www.gutenberg.org/ebooks/76.epub.noimages",
+    "sha256": "86dfe26d0b6e3adff51ead29456157e7b4a552d0129314fd1195c03b499008ef",
+    "passage": "chapter VII, from its opening to the end of the paragraph on the sack of rocks"
+  },
+  "james": {
+    "title": "The Turn of the Screw",
+    "author": "Henry James",
+    "published": 1898,
+    "gutenberg": 209,
+    "url": "https://www.gutenberg.org/ebooks/209.epub.noimages",
+    "sha256": "07775c0d405354fa20cd5b7072160f2464dbd59dec0a662e7915284e1516cf7a",
+    "passage": "chapter III, from the paragraph on the long days of the first weeks to the end of the chapter"
+  }
+}

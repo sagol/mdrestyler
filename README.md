@@ -42,6 +42,10 @@ mdrestyler install my-book/voice profile --lang en
 
 The skill's [SKILL.md](skills/mdrestyler/SKILL.md) and its references explain each step: building and approving a profile, reading the measures, drafting toward a profile, and restyling a book.
 
+## Example
+
+[examples/cross-restyle](examples/cross-restyle/) restyles a passage of *Huckleberry Finn* into the voice of *The Turn of the Screw* and back, with the profiles, every take, the choice and the measures before and after.
+
 ## Building on it
 
 A tool that embeds mdrestyler can configure it once per process with `mdrestyler.names.configure(…)`: the names its messages use, who decides a delegated approval, how its books are laid out, and which earlier profile schemas and defaults it still reads. Pin a release by its manifest digest (`mdrestyler --version`).
