@@ -11,7 +11,7 @@
 - `test_site.py`: the website's version, command examples, links, JSON, JSON-LD and public files agree with the code (`site/validate.py`).
 - `test_skill.py`: the skill's references keep the rules the restyle depends on, and no file in the repository names another product. These are static checks of the text: they say a rule is written, not that an agent follows it.
 
-`python3 tools/manifest.py --check` fails when the manifest is stale. `python3 tools/build_wheel.py` builds the wheel from the skill's own files.
+`python3 tools/manifest.py --check` fails when the manifest is stale. `python3 tools/build_wheel.py` builds the wheel from the skill's own files and fails if it holds anything the command does not need.
 
 ## Known limits
 
