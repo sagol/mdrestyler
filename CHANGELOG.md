@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- A worked example, `examples/cross-restyle`: two public-domain passages restyled into each other's voice, with the profiles, takes, choices and measures.
+
 ## 0.1.0
 
 First release.

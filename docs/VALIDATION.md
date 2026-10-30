@@ -6,6 +6,7 @@
 
 - `test_voice.py`: reading EPUBs (spine order, front matter, notes, encodings, DRM refused, stylesheets deciding what shows), scanning, the measures, calibration and narration and dialogue apart, the copy guard in its three readings, `--accepted` for a revision, ranking, the book table and its restyle reading, installing with history, approval fields, languages and limits. The books are synthetic EPUBs the tests build.
 - `test_core.py`: the configured approval, layout, schemas and defaults, the shipped defaults, the unit list, the standalone own-book eligibility, and the command's version, verify and validate, run from a copy of the skill folder with `python3 -S` and a decoy package in the working directory.
+- `test_example.py`: the cross-restyle example's committed reports are what `examples/cross-restyle/run.py` produces from its profiles and texts.
 - `test_skill.py`: the skill's references keep the rules the restyle depends on, and no file in the repository names another product. These are static checks of the text: they say a rule is written, not that an agent follows it.
 
 `python3 tools/manifest.py --check` fails when the manifest is stale. `python3 tools/build_wheel.py` builds the wheel from the skill's own files.
