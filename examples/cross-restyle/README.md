@@ -18,6 +18,33 @@ The passages:
 
 A first choice for the Twain side, the river at dawn from chapter XIX, turned out to lie beyond the 90th percentile of its own book's chapters, so it was not a fair sample of the voice. The chapter VII opening sits near the middle of the book's spread (nearer than 45% of its chapters). The James passage sits at the edge of its book's spread (1.17 against a 90th percentile of 1.17).
 
+## The restyled texts
+
+| Direction | Source | Restyled (chosen take) | Other takes |
+|---|---|---|---|
+| Twain toward James | [passages/twain.md](passages/twain.md) | [restyle/twain-to-james/take-2.md](restyle/twain-to-james/take-2.md) | [take 1](restyle/twain-to-james/take-1.md), [take 3](restyle/twain-to-james/take-3.md) |
+| James toward Twain | [passages/james.md](passages/james.md) | [restyle/james-to-twain/take-1.md](restyle/james-to-twain/take-1.md) | [take 2](restyle/james-to-twain/take-2.md), [take 3](restyle/james-to-twain/take-3.md) |
+
+One paragraph from each, source first.
+
+Huck, in his own voice:
+
+> He unlocked the door, and I cleared out up the river-bank. I noticed some pieces of limbs and such things floating down, and a sprinkling of bark; so I knowed the river had begun to rise. I reckoned I would have great times now if I was over at the town. The June rise used to be always luck for me; because as soon as that rise begins here comes cordwood floating down, and pieces of log rafts—sometimes a dozen logs together; so all you have to do is to catch them and sell them to the wood-yards and the sawmill.
+
+Huck, restyled toward the governess:
+
+> He unlocked the door, and I took myself off up the river-bank. I noticed, as I went, certain pieces of limbs and such things floating down, together with a sprinkling of bark; and from these I knew, beyond any doubt, that the river had begun to rise. I reckoned, as I remember, that I should have great times of it now if only I had been over at the town. The June rise had always, in those days, been luck for me; for as soon as it began there would come cordwood floating down, and pieces of log rafts—sometimes as many as a dozen logs together—so that all one had to do was to catch them and sell them to the wood-yards and the sawmill.
+
+The governess, in her own voice:
+
+> In the first weeks the days were long; they often, at their finest, gave me what I used to call my own hour, the hour when, for my pupils, teatime and bedtime having come and gone, I had, before my final retirement, a small interval alone. Much as I liked my companions, this hour was the thing in the day I liked most; and I liked it best of all when, as the light faded—or rather, I should say, the day lingered and the last calls of the last birds sounded, in a flushed sky, from the old trees—I could take a turn into the grounds and enjoy, almost with a sense of property that amused and flattered me, the beauty and dignity of the place.
+
+The governess, restyled toward Huck:
+
+> In the first weeks the days was long, and the best of them gave me what I used to call my own hour. That was the hour after my pupils had had their tea and gone to bed, and before I turned in for good myself; it was a little stretch of time I had all alone. I liked the people I was with well enough, but I liked that hour better than anything else in the day.
+>
+> And I liked it best of all when the light was going—or, to put it right, when the day hung on, and the sky was all flushed, and the last birds was making their last calls out of the old trees—and I could take a turn out in the grounds and look at the place. It was a handsome place, and it had a dignity to it, and I enjoyed it most like I owned it; that tickled me, and it flattered me some, too.
+
 ## Results
 
 Narration distance from each profile. Lower is closer; *within* and *beyond* read the distance against the 90th percentile of the profile's own chapters (Twain 1.18, James 1.17).
@@ -52,7 +79,7 @@ What moved, in the narration:
 | `sources.json` | the two books: Gutenberg numbers, URLs and the SHA-256 of the files scanned |
 | `profiles/twain/`, `profiles/james/` | the two profiles, each scanned from its book as a reference book, with a described voice written from the scan's samples. Both are drafts: no author approved them, which a real restyle requires |
 | `passages/` | the two source passages |
-| `restyle/<direction>/` | `decision.md`, `assessment.md`, `before.md`, the three takes, `rank.md`, `choice.md`, `lock-check.md`, `check.md` for the chosen take, and `after.md` |
+| `restyle/<direction>/` | `decision.md`, `assessment.md`, `before.md`, the three takes (the restyled texts; `choice.md` names the chosen one), `rank.md`, `choice.md`, `lock-check.md`, `check.md` for the chosen take, and `after.md` |
 | `results/` | every text against both profiles |
 | `run.py` | regenerates every report |
 
